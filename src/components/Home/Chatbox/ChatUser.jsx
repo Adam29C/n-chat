@@ -268,7 +268,7 @@ const ChatUser = () => {
   return (
     <>
       <div
-        className={`sh-[11vh] h-fit md:h-[9vh] lg:h-[11vh] w-full p-3 md:p-0 flex items-center justify-around ${darkMode ? 'bg-slate-950 border-l-0 md:border-l-2 border-gray-700' : 'border-none bg-white'} fixed top-0 z-10 md:static lg:static`}
+        className={`sh-[11vh] h-fit md:h-[9vh] lg:h-[11vh] w-full p-3 md:p-0 flex items-center justify-between  ${darkMode ? 'bg-slate-950 border-l-0 md:border-l-2 border-gray-700' : 'border-none bg-white'} fixed top-0 z-10 md:static lg:static`}
       >
         <div className="flex items-center">
           <button

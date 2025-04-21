@@ -5,6 +5,7 @@ import socketIOClient from 'socket.io-client';
 import { base_url } from '../../../utils/api_config';
 import { convertTimestamp } from '../../../utils/date.config';
 import { VisiblityPreviewImage } from '../../../Redux/features/user/userSlice';
+import socket from '../../../utils/Socket';
 
 const PreviewSendingInfo = () => {
   const dispatch = useDispatch();
@@ -17,12 +18,12 @@ const PreviewSendingInfo = () => {
   const getDocuments = useSelector((state) => state.user.getDocuments);
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
-  console.log('getDocuments', getDocuments);
+  // console.log('getDocuments', getDocuments);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    const socket = socketIOClient(base_url);
+    // const socket = socketIOClient(base_url);
 
     // if (!selectedUser?._id) {
     //   console.error('No user selected!');
@@ -37,21 +38,21 @@ const PreviewSendingInfo = () => {
     let room_ID = `${_id}-${selectedUser.userId}`;
     let receiverId = selectedUser.userId;
 
-    console.log('dsfsfsdfdsfsdf', {
-      sender: _id,
-      receiver: receiverId,
-      message: inputMessage || '',
-      replyMessage: null,
-      replyName: null,
-      images: abc,
-      audios: '',
-      videos: '',
-      messStatus: 1,
-      userName: name,
-      room: room_ID,
-      dateTime: convertTimestamp(new Date().toISOString()),
-      dateTimestamp: Date.now(),
-    });
+    // console.log('dsfsfsdfdsfsdf', {
+    //   sender: _id,
+    //   receiver: receiverId,
+    //   message: inputMessage || '',
+    //   replyMessage: null,
+    //   replyName: null,
+    //   images: abc,
+    //   audios: '',
+    //   videos: '',
+    //   messStatus: 1,
+    //   userName: name,
+    //   room: room_ID,
+    //   dateTime: convertTimestamp(new Date().toISOString()),
+    //   dateTimestamp: Date.now(),
+    // });
 
     socket.emit('send_message', {
       sender: _id,

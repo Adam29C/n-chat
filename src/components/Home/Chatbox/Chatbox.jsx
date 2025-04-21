@@ -10,8 +10,10 @@ import { ImCross } from 'react-icons/im';
 import socketIOClient from 'socket.io-client';
 import PreviewSendingInfo from './PreviewSendingInfo';
 import ReplayMessage from './ReplayMessage';
+import socket from '../../../utils/Socket';
+
 const Chatbox = () => {
-  const socket = socketIOClient(base_url);
+  // const socket = socketIOClient(base_url);
 
   const showSelectedUserBtn = useSelector(
     (state) => state.showSelectedBtn.value

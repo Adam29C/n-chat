@@ -16,21 +16,12 @@ const Sidebar = () => {
       <div
         className={` test-color   bg-slate-100w-[100%] ${selectAi ? 'hidden' : showSelectedUserBtn ? 'hidden' : 'inline-block'}   md:inline-block md:w-[40%] lg:w-[30%] ${darkMode ? 'shadow-none ' : 'shadow-2xl  shadow-gray-300'} `}
       >
-        {/* <h1 className=" px-3 pt-2">Chatit</h1> */}
-
         <ProfileHeader />
-        {/* <div
-          className="overflow-y-auto hide_scrollbar   rounded-xl "
-          style={{ minHeight: '77vh' }}
-        > */}
 
         <div className="testing-ui">
           <Search />
           <AllUsers />
         </div>
-        {/* </div> */}
-
-        {/* <Logout /> */}
       </div>
     </>
   );

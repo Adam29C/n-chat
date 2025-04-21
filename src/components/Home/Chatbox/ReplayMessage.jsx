@@ -9,7 +9,7 @@ const ReplayMessage = ({ setShowReplayBox, ShowReplayBox }) => {
   const showReplay = useSelector((state) => state.user.showReplay);
   const details = useSelector((state) => state.user.details);
 
-  console.log('details', details);
+  // console.log('details', details);
 
   return (
     <div>

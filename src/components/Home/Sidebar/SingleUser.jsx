@@ -15,14 +15,11 @@ import {
   setMessage,
 } from '../../../Redux/features/message/messageSlice';
 import { useEffect, useState } from 'react';
-import { setSelectAi } from '../../../Redux/features/Ai/aiSlice';
 import { base_url } from '../../../utils/api_config';
 // import { useGetSocketMessage } from '../../../context/useGetSocketMessage';
 import socketIOClient from 'socket.io-client';
 import { GET_SELECTED_USERS_MASSAGES_API } from '../../../services/messages.service';
 import { formatWhatsAppDate } from '../../../helpers/helpers';
-import { useFormik } from 'formik';
-import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 
 const SingleUser = ({ data, title }) => {
   const { _id, email, mobile, name, role } = JSON.parse(
@@ -41,7 +38,7 @@ const SingleUser = ({ data, title }) => {
   const dispatch = useDispatch();
 
   const handleSelectedUser = async (test) => {
-    const receiverId = data?._id;
+    const receiverId = data?.userId;
     const socket = socketIOClient(base_url);
 
     setCreate_roomId(`${_id}-${receiverId}`);
@@ -58,55 +55,8 @@ const SingleUser = ({ data, title }) => {
       dispatch(setMessage(data));
     });
 
-    // socket.emit('send_message', {
-    //   sender: _id,
-    //   receiver: receiverId,
-    //   message: 'Hello, world! testing Ganu',
-    //   replyName: null,
-    //   replyMessage: null,
-    //   images: '',
-    //   audios: '',
-    //   videos: '',
-    //   // messType: "text",
-    //   messStatus: 1,
-    //   userName: name,
-    //   room: `${_id}-${receiverId}`,
-    //   dateTime: new Date().toISOString(),
-    //   dateTimestamp: Date.now(),
-    // });
-
-    // socket.on('get_messages', (data) => {
-    //   console.log('connection', data);
-
-    //   // socket.emit('chat_history', messages);
-    // });
-
-    // socket.on('user_connected', (data) => {
-    //   console.log('connection', data);
-    // });
-
     dispatch(showSelectedUser(true));
-    // dispatch(setSelectAi(false));
   };
-
-  // useEffect(() => {
-  //   // if (socket || Create_roomId && Create_roomId) {
-  //   //   console.log("sdasd" ,);
-  //   // }
-  // }, [socket, Create_roomId]);
-
-  // const avbc = async () => {
-  //   const socket = socketIOClient(base_url);
-
-  //   socket.on('chat_history', async (data) => {
-  //     console.log('datadatadata', data);
-
-  //     dispatch(setMessage(data));
-  //   });
-  // };
-  // useEffect(() => {
-  //   avbc();
-  // }, [dispatch]);
 
   return (
     <>

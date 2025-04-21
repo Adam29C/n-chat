@@ -8,6 +8,7 @@ import { setMessage } from '../../../Redux/features/message/messageSlice';
 import { base_url } from '../../../utils/api_config';
 import socketIOClient from 'socket.io-client';
 import { GetSOketChatHistory } from '../../../utils/Socket.Io';
+import socket from '../../../utils/Socket';
 
 // import useGetSocketMessage from '../../../context/useGetSocketMessage';
 const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
@@ -16,6 +17,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   );
 
   const [loading, setLoading] = useState(false);
+  const [tewsting, settewsting] = useState([]);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
@@ -25,69 +27,73 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
 
   const dispatch = useDispatch();
 
-  // var socket = socketIOClient(base_url);
-  // const adada = async () => {
-  //   await GetSOketChatHistory(selectedUser, _id, (response) => {
-  //     dispatch(setMessage(response));
+  const adada = async () => {
+    await GetSOketChatHistory(selectedUser, _id, (response) => {
+      dispatch(setMessage(response));
+      // dispatch(setMessage([...messages, response]));
+    });
 
-  //     console.log('response', response);
+    // let receiverId = selectedUser.userId;
+
+    // socket.emit('join_room', `${_id}-${receiverId}`);
+
+    // console.log('`${_id}-${receiverId}`', `${_id}-${receiverId}`);
+
+    // socket.emit('get_messages', `${_id}-${receiverId}`);
+
+    // socket.on('chat_history', async (data) => {
+    //   dispatch(setMessage(data));
+    // });
+  };
+
+  useEffect(() => {
+    adada();
+  }, []);
+
+  // let room_ID = `${_id}-${selectedUser.userId}`;
+
+  // useEffect(() => {
+  //   socket.emit('join_room', room_ID);
+
+  //   socket.on('receive_message', (data) => {
+  //     dispatch(setMessage([...messages, data]));
   //   });
 
-  //   // let receiverId = selectedUser.userId;
+  //   return () => {
+  //     socket.off('receive_message');
+  //     socket.off('new_message_notification');
+  //   };
+  // }, [room_ID]);
 
-  //   // socket.emit('join_room', `${_id}-${receiverId}`);
+  // let room_ID = `${_id}-${selectedUser.userId}`;
 
-  //   // socket.emit('get_messages', `${_id}-${receiverId}`);
+  // useEffect(() => {
+  //   socket.emit('join_room', room_ID);
 
-  //   // socket.on('chat_history', async (data) => {
-  //   //   console.log('data', data);
+  //   socket.on('receive_message', (data) => {
+  //     dispatch(setMessage([...messages, data]));
+  //   });
 
-  //   //   dispatch(setMessage(data));
-  //   // });
-  // };
+  //   return () => {
+  //     socket.off('receive_message');
+  //     socket.off('new_message_notification');
+  //   };
+  // }, [first]);
+
+  // console.log('messages', messages);
 
   // useEffect(() => {
   //   adada();
   // }, [first]);
+
+  // var socket = socketIOClient(base_url);
   // useEffect(() => {
-  //   adada();
-  // }, []);
+  //   socket.on('send_message', async (data) => {});
+  // }, [socket]);
 
-  const socket = socketIOClient(base_url, { autoConnect: false }); // Global Socket Connection
-
-  const adada = async () => {
-    await GetSOketChatHistory(selectedUser, _id, (response) => {
-      dispatch(setMessage(response));
-    });
-
-    if (selectedUser?._id) {
-      // let roomID = `${_id}-${selectedUser._id}`;
-      let roomID = `61fbd0cd41b0d43022cabf27-6787c70cbab5b27b93c07b65`;
-      socket.emit('join_room', roomID);
-      socket.emit('get_messages', roomID);
-    }
-  };
-
-  useEffect(() => {
-    socket.connect();
-
-    socket.on('chat_history', (data) => {
-      console.log('data1212', data);
-
-      dispatch(setMessage(data));
-    });
-
-    return () => {
-      socket.off('chat_history');
-      socket.disconnect();
-    };
-  }, [first]);
-
-  useEffect(() => {
-    adada();
-  }, [first, selectedUser]);
-
-  // console.log('messages12121c', messages);
+  // useEffect(() => {
+  //   settewsting(messages);
+  // }, [messages]);
 
   return (
     <>
@@ -98,32 +104,22 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
         // style={{ minHeight: 'calc(91vh - 10vh)' }}
       >
         {loadingMessages ? (
-          <>
-            <MessageLoader />
-          </>
+          <MessageLoader />
         ) : (
           <>
             {messages?.length <= 0 ? (
-              <div className="w-full h-60  flex items-center justify-center">
+              <div className="w-full h-60 flex items-center justify-center">
                 <p className="text-base md:text-xl lg:text-2xl">
                   Say! Hi to start the conversation
                 </p>
               </div>
             ) : (
-              // messages.map((item, index) =>
-              //   selectedUser?._id === item?.senderId ||
-              //   selectedUser?.adminId === item?.receiverId ? (
-              //     <SingleMessage key={index} data={item} />
-              //   ) : null
-
               messages?.map((item, index) => (
-                <>
-                  <SingleMessage
-                    key={index}
-                    data={item}
-                    setShowReplayBox={setShowReplayBox}
-                  />
-                </>
+                <SingleMessage
+                  key={item._id || index}
+                  data={item}
+                  setShowReplayBox={setShowReplayBox}
+                />
               ))
             )}
           </>

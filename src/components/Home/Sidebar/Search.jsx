@@ -212,9 +212,9 @@ const Search = ({title}) => {
   // const otherUsers = useSelector((state) => state.user.otherUsers);
 
   const getAllUser12 = async () => {
-    const res = await GET_ALL_USERS_URI_API();
+    // const res = await GET_ALL_USERS_URI_API();
 
-    setData(res?.data.users);
+    // setData(res?.data.users);
   };
 
   useEffect(() => {

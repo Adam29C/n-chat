@@ -1,0 +1,38 @@
+import axios from 'axios';
+import dataservice, { base_url } from '../utils/api_config';
+import { apiRoutes } from '../utils/apiRoutes';
+
+export const GET_ALL_USERS_URI_API = async (sendData) => {
+  try {
+    const response = await dataservice.get(
+      `${apiRoutes.USERS_URI}?page=${sendData ? sendData : 1}&limit=20`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    return { status: 'error', data: error.response?.data?.message };
+  }
+};
+
+export const SEARCH_USERS_URI_API = async (sendData) => {
+  try {
+    const response = await dataservice.post(
+      `${apiRoutes.SEARCH_USERS_UPI}`,
+      sendData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    return { status: 'error', data: error.response?.data?.message };
+  }
+};

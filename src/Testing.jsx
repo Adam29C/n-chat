@@ -115,83 +115,172 @@
 //   );
 // }
 
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+// import React, { useState, useEffect, useRef } from 'react';
+// import axios from 'axios';
 
-const InfiniteScroll = () => {
-  const [data, setData] = useState([]); // API data store karega
-  const [page, setPage] = useState(1); // Current page track karega
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+// const InfiniteScroll = () => {
+//   const [data, setData] = useState([]); // API data store karega
+//   const [page, setPage] = useState(1); // Current page track karega
+//   const [loading, setLoading] = useState(false);
+//   const [hasMore, setHasMore] = useState(true);
 
-  const observerRef = useRef(null);
+//   const observerRef = useRef(null);
 
-  // 📌 API se data fetch karna
-  const fetchData = async () => {
-    if (!hasMore || loading) return;
-    setLoading(true);
+//   // 📌 API se data fetch karna
+//   const fetchData = async () => {
+//     if (!hasMore || loading) return;
+//     setLoading(true);
 
-    // `https://api.example.com/posts?page=${page}`
-    try {
-      const response = await axios.get(
-        `http://3.250.174.141:7806/user/all?page=${page}&limit=20`
-      );
+//     // `https://api.example.com/posts?page=${page}`
+//     try {
+//       const response = await axios.get(
+//         `http://3.250.174.141:7806/user/all?page=${page}&limit=20`
+//       );
 
-      const newData = response.data.data.users;
+//       const newData = response.data.data.users;
 
-      if (newData.length === 0) {
-        setHasMore(false);
-      } else {
-        setData((prev) => [...prev, ...newData]);
-        setPage((prev) => prev + 1);
-      }
-    } catch (error) {
-      console.error('Error fetching data', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+//       if (newData.length === 0) {
+//         setHasMore(false);
+//       } else {
+//         setData((prev) => [...prev, ...newData]);
+//         setPage((prev) => prev + 1);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching data', error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  useEffect(() => {
-    if (loading) return;
+//   useEffect(() => {
+//     if (loading) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          fetchData();
-        }
-      },
-      { threshold: 1.0 }
-    );
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         if (entries[0].isIntersecting && hasMore) {
+//           fetchData();
+//         }
+//       },
+//       { threshold: 1.0 }
+//     );
 
-    if (observerRef.current) observer.observe(observerRef.current);
+//     if (observerRef.current) observer.observe(observerRef.current);
 
-    return () => {
-      if (observerRef.current) observer.unobserve(observerRef.current);
-    };
-  }, [loading, hasMore]);
+//     return () => {
+//       if (observerRef.current) observer.unobserve(observerRef.current);
+//     };
+//   }, [loading, hasMore]);
 
-  console.log('observerRef', observerRef);
+//   console.log('observerRef', observerRef);
 
-  return (
-    <div className="container">
-      <h2>Infinite Scroll with Pagination</h2>
-      <ul>
-        {data.map((item, index) => (
-          <li key={index}>{item.userName}</li> // API ka data show karega
-        ))}
-      </ul>
+//   return (
+//     <div className="container">
+//       <h2>Infinite Scroll with Pagination</h2>
+//       <ul>
+//         {data.map((item, index) => (
+//           <li key={index}>{item.userName}</li> // API ka data show karega
+//         ))}
+//       </ul>
 
-      {/* {loading && <p>Loading...</p>} */}
-      {!hasMore && <p>No more data</p>}
+//       {/* {loading && <p>Loading...</p>} */}
+//       {!hasMore && <p>No more data</p>}
 
-      {/* 👇 Intersection Observer ke liye reference */}
-      <div
-        ref={observerRef}
-        style={{ height: '20px', background: 'transparent' }}
-      ></div>
-    </div>
-  );
-};
+//       {/* 👇 Intersection Observer ke liye reference */}
+//       <div
+//         ref={observerRef}
+//         style={{ height: '20px', background: 'transparent' }}
+//       ></div>
+//     </div>
+//   );
+// };
 
-export default InfiniteScroll;
+// export default InfiniteScroll;
+
+// import React, { useEffect, useState } from 'react';
+// import { useSelector } from 'react-redux';
+// import io from 'socket.io-client';
+
+// const socket = io('http://3.250.174.141:7806/'); // Replace with your server URL
+
+// const Chat = ({ userId, userName, roomId, receiverId }) => {
+//   const [message, setMessage] = useState('');
+//   const [messages, setMessages] = useState([]);
+
+//   const { _id, email, mobile, name, role } = JSON.parse(
+//     localStorage.getItem('info')
+//   );
+//   const details = useSelector((state) => state.user.details);
+
+//   const selectedUser = useSelector((state) => state.user.selectedUser);
+
+//   // Join room on mount
+//   let room_ID = '61fbd0cd41b0d43022cabf27-67974c7eb81801947f2d26ef';
+//   useEffect(() => {
+//     // socket.emit('join_room', room_ID);
+
+//     socket.on('receive_message', (data) => {
+//       console.log('Message received: ', data);
+//       setMessages((prev) => [...prev, data]);
+//     });
+
+//     socket.on('new_message_notification', (notif) => {
+//       console.log('🔔 Notification:', notif);
+//     });
+
+//     return () => {
+//       socket.off('receive_message');
+//       socket.off('new_message_notification');
+//     };
+//   }, [room_ID]);
+
+//   const sendMessage = () => {
+//     if (!message.trim()) return;
+
+//     const messageData = {
+//       sender: userId,
+//       receiver: receiverId,
+//       message: message,
+//       room: '61fbd0cd41b0d43022cabf27-67974c7eb81801947f2d26ef',
+//       dateTime: new Date().toLocaleString(),
+//       dateTimestamp: Date.now(),
+//     };
+
+//     socket.emit('send_message', messageData);
+//     setMessage('');
+//   };
+
+//   return (
+//     <div className="p-4">
+//       <h2 className="text-xl font-bold mb-4">Chat Room: {room_ID}</h2>
+//       <div className="h-64 overflow-y-auto border p-2 mb-4 bg-white rounded shadow">
+//         {messages.map((msg, index) => (
+//           <div
+//             key={index}
+//             className={`mb-2 p-2 rounded ${msg.sender._id === userId ? 'bg-green-100 text-right' : 'bg-gray-100 text-left'}`}
+//           >
+//             <div className="text-sm font-semibold">{msg.sender.userName}</div>
+//             <div>{msg.message}</div>
+//             <div className="text-xs text-gray-500">{msg.dateTime}</div>
+//           </div>
+//         ))}
+//       </div>
+//       <div className="flex gap-2">
+//         <input
+//           type="text"
+//           value={message}
+//           onChange={(e) => setMessage(e.target.value)}
+//           className="border rounded w-full p-2"
+//           placeholder="Type your message..."
+//         />
+//         <button
+//           onClick={sendMessage}
+//           className="bg-blue-500 text-white px-4 py-2 rounded"
+//         >
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chat;

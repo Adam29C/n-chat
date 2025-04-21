@@ -12,6 +12,7 @@ export const selectUserSlice = createSlice({
   reducers: {
     setMessage: (state, action) => {
       state.messages = action.payload;
+
       state.error = null;
     },
     sendMessages: (state, action) => {
@@ -24,11 +25,15 @@ export const selectUserSlice = createSlice({
       state.loadingMessages = action.payload;
       state.error = null;
     },
+
+    addMessage: (state, action) => {
+      state.messages.push(action.payload);
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setMessage, sendMessages, setLoadingMessages } =
+export const { setMessage, sendMessages, setLoadingMessages, addMessage } =
   selectUserSlice.actions;
 
 export default selectUserSlice.reducer;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { IoMdSend } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
-import { SendMessages } from '../../../utils/messageApiCall';
+// import { SendMessages } from '../../../utils/messageApiCall';
 import { FaPlus } from 'react-icons/fa';
 import { IoImagesOutline } from 'react-icons/io5';
 import { MdOutlineEmojiEmotions, MdSpatialAudioOff } from 'react-icons/md';
@@ -9,7 +9,7 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 // import { toast, Toaster } from 'react-toastify';
 import toast, { Toaster } from 'react-hot-toast';
-import { sendMessages } from '../../../Redux/features/message/messageSlice';
+// import { sendMessages } from '../../../Redux/features/message/messageSlice';
 import { base_url } from '../../../utils/api_config';
 import socketIOClient from 'socket.io-client';
 import { RxDragHandleDots2 } from 'react-icons/rx';
@@ -26,22 +26,29 @@ import Pophover from '../../HelpersComponents/Pophover';
 import { GET_UPLOAD_DOCUMENT_LINK } from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import logger from 'redux-logger';
+import socket from '../../../utils/Socket';
+import { SendMessages } from '../../../utils/Socket.Io';
+import { setMessage } from '../../../Redux/features/message/messageSlice';
 
-const MessageSend = ({ setfirst, socket }) => {
+const MessageSend = ({ setfirst }) => {
   const modalRef = useRef(null);
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
   const details = useSelector((state) => state.user.details);
+  // const socket = socketIOClient(base_url);
 
   const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message121, setMessage121] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentEmoji, setCurrentEmoji] = useState(null);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const showReplay = useSelector((state) => state.user.showReplay);
+  const messages = useSelector((state) => state.message.messages);
+
+  // console.log('messages', messages);
 
   const menuRef = useRef(null);
   const btnRef = useRef(null);
@@ -55,49 +62,37 @@ const MessageSend = ({ setfirst, socket }) => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    setfirst(message);
+    // setfirst(message121);
+
+    if (message121 === '') {
+      toast.error('Please enter a message');
+      // console.error('No user selected!');
+      return;
+    }
 
     if (!selectedUser?.userId) {
       console.error('No user selected!');
       return;
     }
 
-    let room_ID = `${_id}-${selectedUser.userId}`;
-    let receiverId = selectedUser.userId;
+    // let room_ID = `${_id}-${selectedUser.userId}`;
+    // let receiverId = selectedUser.userId;
 
-    socket.emit('send_message', {
-      sender: _id,
-      receiver: receiverId,
-      message: message || '',
-      replyMessage: showReplay ? details?.message : null,
-      replyName: showReplay ? details?.username : null,
-      images: '',
-      audios: '',
-      videos: '',
-      messStatus: 1,
-      userName: name,
-      room: room_ID,
-      dateTime: convertTimestamp(new Date().toISOString()),
-      dateTimestamp: Date.now(),
-    });
-
-    setMessage('');
+    await SendMessages(selectedUser, _id, message121, name);
+    // socket.emit('get_messages', room_ID);
+    setMessage121('');
     dispatch(VisiblityReplay(false));
 
-    socket.emit('get_messages', room_ID);
-  };
 
-  useEffect(() => {
-    socket.on('chat_history', (data) => {
-      console.log('chat_history', data);
+    const handleMessage = async (data) => {
+      console.log('data', data);
 
-      dispatch(setMessage(data));
-    });
-
-    return () => {
-      socket.off('chat_history');
+      // await dispatch(setMessage((prevMessages) => [...prevMessages, data]));
     };
-  }, [dispatch]);
+
+    socket.on('receive_message', handleMessage);
+
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -160,7 +155,7 @@ const MessageSend = ({ setfirst, socket }) => {
                 previewPosition="none"
                 onEmojiSelect={(e) => {
                   // setCurrentEmoji(e.native);
-                  setMessage(message + e.native);
+                  setMessage121(message121 + e.native);
                 }}
               />
             </div>
@@ -181,8 +176,8 @@ const MessageSend = ({ setfirst, socket }) => {
               <input
                 type="text"
                 name="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                value={message121}
+                onChange={(e) => setMessage121(e.target.value)}
                 placeholder="Message"
                 className={`outline-none py-1 px-2 rounded w-full bg-transparent`}
               />
@@ -204,9 +199,9 @@ const MessageSend = ({ setfirst, socket }) => {
                 </div>
 
                 <button
-                  className={`${message == '' ? 'bg-slate-400' : 'bg-blue-600 hover:bg-blue-800'}  rounded-full text-white p-2 mx-1`}
+                  className={`${message121 == '' ? 'bg-slate-400' : 'bg-blue-600 hover:bg-blue-800'}  rounded-full text-white p-2 mx-1`}
                   onClick={handleSendMessage}
-                  disabled={message === ''}
+                  disabled={message121 === ''}
                 >
                   <IoMdSend className="text-2xl" />
                 </button>

@@ -162,39 +162,137 @@
 
 // export default AllUsers;
 
+// import { useDispatch, useSelector } from 'react-redux';
+// import AllUserLoader from '../../Loader/AllUserLoader';
+// import SingleUser from './SingleUser';
+// import { useEffect, useRef, useState, useCallback } from 'react';
+// import { GET_ALL_USERS_URI_API } from '../../../services/users.service';
+// import { setOtherUsers } from '../../../Redux/features/user/userSlice';
+// import socketIOClient from 'socket.io-client';
+// import { base_url } from '../../../utils/api_config';
+
+// const AllUsers = () => {
+//   const [data, setData] = useState([]); // Store API data
+//   const [page, setPage] = useState(1); // Track current page
+//   const [hasMore, setHasMore] = useState(true);
+//   const [loading, setLoading] = useState(false);
+//   const observerRef = useRef(null);
+//   const dispatch = useDispatch();
+//   const darkMode = useSelector((state) => state.darkTheme.value);
+//   const otherUsers = useSelector((state) => state.user.otherUsers);
+
+//   let isFetching = false; // Prevent duplicate calls
+
+//   const fetchData = useCallback(async () => {
+//     if (!hasMore || loading || isFetching) return;
+
+//     isFetching = true;
+//     setLoading(true);
+
+//     try {
+//       const response = await GET_ALL_USERS_URI_API(page);
+
+//       const newData = response?.data?.users || [];
+//       if (response?.status === 'error' || newData.length === 0) {
+//         setHasMore(false);
+//       } else {
+//         // setData((prev) => [...prev, ...newData]);
+//         dispatch(setOtherUsers([...otherUsers, ...newData]));
+//         setPage((prev) => prev + 1);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching data:', error);
+//     } finally {
+//       setLoading(false);
+//       isFetching = false;
+//     }
+//   }, [page, hasMore, loading]);
+
+//   useEffect(() => {
+//     if (!hasMore) return;
+
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         if (entries[0].isIntersecting && !loading) {
+//           fetchData();
+//         }
+//       },
+//       { threshold: 0.1 }
+//     );
+
+//     if (observerRef.current) observer.observe(observerRef.current);
+
+//     return () => {
+//       if (observerRef.current) observer.unobserve(observerRef.current);
+//     };
+//   }, [fetchData, hasMore]);
+
+//   return (
+//     <>
+//       <div
+//         className={`  overflow-y-auto bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[86vh] ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}
+//       >
+//         {otherUsers?.map((item, index) => (
+//           <SingleUser data={item} key={index} />
+//         ))}
+
+//         <div
+//           ref={observerRef}
+//           style={{ height: '10px', background: 'transparent' }}
+//         ></div>
+//         {/* {loading && (
+//           <>
+//             <AllUserLoader />
+//             <AllUserLoader />
+//             <AllUserLoader />
+//           </>
+//         )} */}
+//       </div>
+
+//       {otherUsers?.length === 0 && !loading && (
+//         <div className="w-full h-36 flex justify-center items-center">
+//           <p>No user found</p>
+//         </div>
+//       )}
+//     </>
+//   );
+// };
+
+// export default AllUsers;
+
 import { useDispatch, useSelector } from 'react-redux';
 import AllUserLoader from '../../Loader/AllUserLoader';
 import SingleUser from './SingleUser';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { GET_ALL_USERS_URI_API } from '../../../services/users.service';
 import { setOtherUsers } from '../../../Redux/features/user/userSlice';
+import socketIOClient from 'socket.io-client';
+import { base_url } from '../../../utils/api_config';
 
 const AllUsers = () => {
-  const [data, setData] = useState([]); // Store API data
-  const [page, setPage] = useState(1); // Track current page
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef(null);
+  const isFetchingRef = useRef(false); // 🔥 persistent fetching flag
   const dispatch = useDispatch();
+
   const darkMode = useSelector((state) => state.darkTheme.value);
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  let isFetching = false; // Prevent duplicate calls
-
   const fetchData = useCallback(async () => {
-    if (!hasMore || loading || isFetching) return;
+    if (!hasMore || loading || isFetchingRef.current) return;
 
-    isFetching = true;
+    isFetchingRef.current = true;
     setLoading(true);
 
     try {
       const response = await GET_ALL_USERS_URI_API(page);
-
       const newData = response?.data?.users || [];
+
       if (response?.status === 'error' || newData.length === 0) {
         setHasMore(false);
       } else {
-        // setData((prev) => [...prev, ...newData]);
         dispatch(setOtherUsers([...otherUsers, ...newData]));
         setPage((prev) => prev + 1);
       }
@@ -202,9 +300,9 @@ const AllUsers = () => {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
-      isFetching = false;
+      isFetchingRef.current = false;
     }
-  }, [page, hasMore, loading]);
+  }, [page, hasMore, loading, otherUsers, dispatch]);
 
   useEffect(() => {
     if (!hasMore) return;
@@ -218,33 +316,37 @@ const AllUsers = () => {
       { threshold: 0.1 }
     );
 
-    if (observerRef.current) observer.observe(observerRef.current);
+    const currentRef = observerRef.current;
+    if (currentRef) observer.observe(currentRef);
 
     return () => {
-      if (observerRef.current) observer.unobserve(observerRef.current);
+      if (currentRef) observer.unobserve(currentRef);
     };
-  }, [fetchData, hasMore]);
+  }, [fetchData, hasMore, loading]);
 
   return (
     <>
       <div
-        className={`  overflow-y-auto bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[72vh] ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}
+        className={`overflow-y-auto bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[86vh] ${
+          darkMode ? 'bg-slate-950' : 'bg-slate-100'
+        }`}
       >
         {otherUsers?.map((item, index) => (
-          <SingleUser data={item} key={index} />
+          <SingleUser data={item} key={item._id || index} />
         ))}
 
         <div
           ref={observerRef}
           style={{ height: '10px', background: 'transparent' }}
         ></div>
-        {/* {loading && (
+
+        {loading && (
           <>
             <AllUserLoader />
             <AllUserLoader />
             <AllUserLoader />
           </>
-        )} */}
+        )}
       </div>
 
       {otherUsers?.length === 0 && !loading && (

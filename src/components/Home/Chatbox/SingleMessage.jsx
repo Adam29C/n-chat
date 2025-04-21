@@ -6,9 +6,12 @@ import Pophover from '../../HelpersComponents/Pophover';
 import {
   GetSocketRemoveMessage,
   GetSOketChatHistory,
-  SocketIntiate,
 } from '../../../utils/Socket.Io';
-import { setMessage } from '../../../Redux/features/message/messageSlice';
+import socketIOClient from 'socket.io-client';
+import {
+  addMessage,
+  setMessage,
+} from '../../../Redux/features/message/messageSlice';
 import DialogBox from '../../HelpersComponents/DialogBox';
 import { MdOutlineMessage } from 'react-icons/md';
 import Search from '../Sidebar/Search';
@@ -18,11 +21,15 @@ import {
   ManageReplayDetails,
 } from '../../../Redux/features/user/userSlice';
 import { FiMessageCircle } from 'react-icons/fi';
+import { base_url } from '../../../utils/api_config';
+import socket from '../../../utils/Socket';
 
 const SingleMessage = ({ data, setShowReplayBox }) => {
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
+
+  const messages = useSelector((state) => state.message.messages);
 
   const dispatch = useDispatch();
 
@@ -37,8 +44,6 @@ const SingleMessage = ({ data, setShowReplayBox }) => {
 
   const scroll = useRef();
   const [hover, setHover] = useState(false);
-
-  // const msgDate = new Date(data.dateTimestamp * 1000);
 
   const createdAt = new Date(data.createTime);
   const formatedTime = createdAt.toLocaleTimeString([], {
@@ -63,6 +68,43 @@ const SingleMessage = ({ data, setShowReplayBox }) => {
   const ShowHiddenTabs = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    const room_ID = `${_id}-${selectedUser.userId}`;
+
+    const handleMessage = async (data) => {
+      dispatch(addMessage(data));
+    };
+
+    socket.emit('join_room', room_ID);
+
+    // Important: remove old listeners before adding new one
+    socket.off('receive_message');
+    socket.on('receive_message', handleMessage);
+
+    return () => {
+      socket.off('receive_message', handleMessage);
+    };
+  }, [_id, selectedUser?.userId]);
+
+  // useEffect(() => {
+  //   const room_ID = `${_id}-${selectedUser.userId}`;
+  //   // socket.emit('join_room', room_ID);
+
+  //   const handleMessage = async (data) => {
+  //     console.log('latest_message', data);
+
+  //     // await dispatch(setMessage((prevMessages) => [...prevMessages, data]));
+  //   };
+
+  //   socket.emit('message_receive', room_ID);
+  //   socket.on('latest_message', handleMessage);
+
+  //   return () => {
+  //     socket.off('message_receive', handleMessage);
+  //     socket.off('latest_message');
+  //   };
+  // }, [socket, _id, selectedUser.userId]);
 
   const DeleteMessages = async () => {
     await GetSocketRemoveMessage(selectedUser, _id, data, (response) => {});
@@ -94,8 +136,11 @@ const SingleMessage = ({ data, setShowReplayBox }) => {
     dispatch(VisiblityReplay(true));
   };
 
-  const isDeletedForUser = data.deletedFor.includes(selectedUser._id);
-
+  let isDeletedForUser = useEffect(() => {
+    if (data) {
+      isDeletedForUser = data && data?.deletedFor.includes(selectedUser._id);
+    }
+  }, [data]);
   return (
     <div ref={scroll}>
       <Pophover
@@ -139,14 +184,11 @@ const SingleMessage = ({ data, setShowReplayBox }) => {
                     />
                   )}
                 </div>
-                {/* {console.log('data.images.length',  data.images[0] == '')}// */}
-                { data.images[0] == ''  ? (
-                  <span className="break-words whitespace-pre-wrap w-full max-w-full overflow-hidden ">
-                    {showSoftDeletedMessage(data?.message)}
-                  </span>
-                ) : (
+                {data.images.length > 0 && data.message === '' && (
                   <img src={data.images[0]} alt="" height={20} width={200} />
-                )} 
+                )}
+
+                {data.message !== '' && showSoftDeletedMessage(data?.message)}
               </span>
             </div>
             <div className="chat-footer text-xs text-gray-500">
@@ -162,7 +204,7 @@ const SingleMessage = ({ data, setShowReplayBox }) => {
                 onMouseLeave={() => setHover(false)}
               >
                 <span className="flex-grow">
-                  <div className="chat-bubble border-l-2 bg-blue-700 border-indigo-500 text-left flex flex-col shadow-md transition duration-2000">
+                  <div className="chat-bubble  bg-blue-700 border-indigo-500 text-left flex flex-col shadow-md transition duration-2000">
                     <span className="text-stone-950 text-xs">
                       {details?.username}
                     </span>

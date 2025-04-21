@@ -38,6 +38,10 @@ const Login = () => {
 
         const res = await LOGIN_URI_API(values);
 
+
+        console.log('====================================');
+        console.log("res" ,res);
+        console.log('====================================');
         setLoading(false);
         if (res.status === 0) {
           toast.error(res.message, {
@@ -46,8 +50,7 @@ const Login = () => {
         } else {
           console.log('res.data', res.data);
 
-          // setAuthUser(res.data);
-          // return;
+       
 
           dispatch(
             setAuthUser({

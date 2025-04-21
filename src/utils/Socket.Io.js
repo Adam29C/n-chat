@@ -1,59 +1,82 @@
 import { base_url } from './api_config';
 import socketIOClient from 'socket.io-client';
+import socket from './Socket';
+import { convertTimestamp } from './date.config';
 
-export const SocketIntiate = (selectedUser, _id) => {
-  const socket = socketIOClient(base_url);
-  let receiverId = selectedUser._id;
-  socket.emit('join_room', `${_id}-${receiverId}`);
-};
+// export const SocketIntiate = (selectedUser, _id) => {
+//   const socket = socketIOClient(base_url);
+//   let receiverId = selectedUser._id;
+//   socket.emit('join_room', `${_id}-${receiverId}`);
+// };
 
-export const JoinSocketIntiate = (selectedUser, _id) => {
-  const socket = socketIOClient(base_url);
-  let receiverId = selectedUser._id;
-  socket.emit('join_room', `${_id}-${receiverId}`);
-};
+// export const JoinSocketIntiate = (selectedUser, _id) => {
+//   const socket = socketIOClient(base_url);
+//   let receiverId = selectedUser._id;
+//   socket.emit('join_room', `${_id}-${receiverId}`);
+// };
 
-export const SendMessages = (selectedUser, _id) => {
-  const socket = socketIOClient(base_url);
+// export const SendMessages = (selectedUser, _id, message, name) => {
+//   let receiverId = selectedUser.userId;
+//   let room_ID = `${_id}-${receiverId}`;
 
-  let room_ID = `${_id}-${selectedUser._id}`;
-  let receiverId = selectedUser._id;
+//   socket.emit('send_message', {
+//     sender: _id,
+//     receiver: receiverId,
+//     message,
+//     replyName: null,
+//     replyMessage: null,
+//     images: '',
+//     audios: '',
+//     videos: '',
+//     messStatus: 1,
+//     userName: name,
+//     room: room_ID,
+//     dateTime: convertTimestamp(new Date().toISOString()),
+//     dateTimestamp: Date.now(),
+//   });
 
-  // socket.emit('send_message', {
-  //   sender: _id,
-  //   receiver: receiverId,
-  //   message: message && message,
-  //   replyName: null,
-  //   replyMessage: null,
-  //   images: '',
-  //   audios: '',
-  //   videos: '',
-  //   // messType: "text",
-  //   messStatus: 1,
-  //   userName: name,
-  //   room: room_ID,
-  //   // room: `${_id}-${receiverId}`,
-  //   dateTime: convertTimestamp(new Date().toISOString()),
-  //   dateTimestamp: Date.now(),
-  // });
+//   socket.emit('get_messages', room_ID);
 
-  // const socket = socketIOClient(base_url);
+//   return () => {
+//     socket.off('send_message');
+//     socket.off('get_messages');
+//     socket.disconnect();
+//   };
+// };
 
-  // let receiverId = selectedUser._id;
+export const SendMessages = (selectedUser, _id, message, name) => {
+  const receiverId = selectedUser.userId;
+  const ids = [_id, receiverId].sort();
+  const room_ID = `${ids[0]}-${ids[1]}`;
 
-  // socket.emit('join_room', `${_id}-${receiverId}`);
+  socket.emit('send_message', {
+    sender: _id,
+    receiver: receiverId,
+    message,
+    replyName: null,
+    replyMessage: null,
+    images: '',
+    audios: '',
+    videos: '',
+    messStatus: 1,
+    userName: name,
+    room: room_ID,
+    dateTime: convertTimestamp(new Date().toISOString()),
+    dateTimestamp: Date.now(),
+  });
+
+  socket.emit('get_messages', room_ID);
 };
 
 export const GetSOketChatHistory = (selectedUser, _id, callback) => {
-  
-  const socket = socketIOClient(base_url, { transports: ['websocket'] });
+  // const socket = socketIOClient(base_url, { transports: ['websocket'] });
 
   if (!selectedUser?._id || !_id) return;
 
   let receiverId = selectedUser._id;
   let roomId = `${_id}-${receiverId}`;
 
-  socket.emit('join_room', roomId);
+  // socket.emit('join_room', roomId);
   socket.emit('get_messages', roomId);
 
   socket.on('chat_history', (data) => {
@@ -64,6 +87,7 @@ export const GetSOketChatHistory = (selectedUser, _id, callback) => {
 
   return () => {
     socket.off('chat_history');
+    socket.off('get_messages');
     socket.disconnect();
   };
 };
@@ -82,7 +106,7 @@ export const GetSocketRemoveMessage = (
 
   const payload = { messageId: messageId, room: room, userId: userId };
 
-  socket.emit('join_room', room);
+  // socket.emit('join_room', room);
   socket.emit('delete_message', payload);
 
   //   GetSOketChatHistory(selectedUser, _id);
@@ -100,13 +124,31 @@ export const GetSOketRemove = (selectedUser, _id, callback) => {
   let receiverId = selectedUser._id;
   let roomId = `${_id}-${receiverId}`;
 
-  socket.emit('join_room', roomId);
+  // socket.emit('join_room', roomId);
 
   socket.on('delete_message', (data) => {
     if (callback) {
       callback(data); // Send data to parent function
     }
   });
+
+  return () => {
+    socket.off('delete_message');
+    socket.disconnect();
+  };
+};
+
+export const getLastMessages = (selectedUser, _id, callback) => {
+  // const socket = socketIOClient(base_url, { transports: ['websocket'] });
+
+  // if (!selectedUser?._id || !_id) return;
+
+  let receiverId = selectedUser._id;
+  let roomId = `${_id}-${receiverId}`;
+
+  // socket.emit('join_room', roomId);
+
+  socket.emit('message_receive', room);
 
   return () => {
     socket.off('delete_message');
