@@ -32,7 +32,6 @@ const DialogBox = ({
   useEffect(() => {
     if (OpenModal) {
       document.getElementById(modal_id).showModal();
-
     } else {
       document.getElementById(modal_id).close();
     }
@@ -50,6 +49,7 @@ const DialogBox = ({
           </div>
 
           {body}
+      
         </div>
       </dialog>
     </>

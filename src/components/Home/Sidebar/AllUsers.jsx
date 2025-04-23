@@ -274,7 +274,7 @@ const AllUsers = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef(null);
-  const isFetchingRef = useRef(false); // 🔥 persistent fetching flag
+  const isFetchingRef = useRef(false);
   const dispatch = useDispatch();
 
   const darkMode = useSelector((state) => state.darkTheme.value);
@@ -327,7 +327,7 @@ const AllUsers = () => {
   return (
     <>
       <div
-        className={`overflow-y-auto bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[86vh] ${
+        className={`overflow-y-auto bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[85vh] ${
           darkMode ? 'bg-slate-950' : 'bg-slate-100'
         }`}
       >

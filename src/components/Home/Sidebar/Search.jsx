@@ -203,7 +203,7 @@ import {
   GET_ALL_USERS_URI_API,
   SEARCH_USERS_URI_API,
 } from '../../../services/users.service';
-const Search = ({title}) => {
+const Search = ({ title }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
@@ -213,7 +213,6 @@ const Search = ({title}) => {
 
   const getAllUser12 = async () => {
     // const res = await GET_ALL_USERS_URI_API();
-
     // setData(res?.data.users);
   };
 
@@ -255,7 +254,7 @@ const Search = ({title}) => {
   const getAllUser = async () => {
     const throttledFetch = throttle(async () => {
       try {
-        const res = await SEARCH_USERS_URI_API({ text: search });
+        const res = await SEARCH_USERS_URI_API(search);
 
         if (res?.status === 'error') {
           dispatch(setOtherUsers([]));

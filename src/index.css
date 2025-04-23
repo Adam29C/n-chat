@@ -64,7 +64,7 @@ table {
 }
 
 .add-point-btn {
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .test-color {
@@ -106,4 +106,57 @@ table {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+.chat-start .chat-bubble {
+  grid-column-start: 2;
+  border-end-start-radius: 0px;
+  /* background: linear-gradient(97.51deg, #37574e -39.91%, #4aa48c 117.67%); */
+  background: #fff;
+
+  color: #000;
+}
+
+.replay-message-bg {
+  background: var(--main-color);
+  color: #fff;
+}
+
+.replay-message-border {
+  border-left: 42px solid  linear-gradient(97.51deg, #1c3e35 -39.91%, #4aa48c 117.67%) !important;
+}
+.chat-end .chat-bubble {
+  /* background: #fff !important; */
+  background: var(--main-color);
+}
+
+.send-button-color {
+  background: var(--main-color);
+}
+.diable-send-button-color {
+  background: linear-gradient(97.51deg, #8aa79f -39.91%, #4aa48c 80.67%);
+}
+
+.main-bg {
+  background: var(--main-color);
+}
+
+@media (max-width: 1024px) {
+  .custom-margin {
+    margin-top: 79px;
+  }
+}
+@media (max-width: 420px) {
+  .custom-message-font-size {
+    font-size: 13px;
+  }
+}
+@media (min-width: 320px) and (max-width: 1024px) {
+  .nav {
+    background: red;
+  }
+}
+@media (min-width: 320px) and (max-width: 1024px) {
+  .nav {
+    background: red;
+  }
 }

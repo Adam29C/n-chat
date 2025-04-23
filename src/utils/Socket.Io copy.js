@@ -64,7 +64,16 @@ export const SendMessages = (selectedUser, _id, message, name) => {
     dateTime: convertTimestamp(new Date().toISOString()),
     dateTimestamp: Date.now(),
   });
-  
+
+  socket.emit('message_receive', room_ID);
+
+  const handleMessage = (data) => {
+    console.log('data1111111111111', data);
+
+    // dispatch(addMessage(data));
+  };
+
+  socket.on('latest_message', handleMessage);
 
   socket.emit('get_messages', room_ID);
 };
@@ -123,7 +132,7 @@ export const GetSOketChatHistory = (selectedUser, _id, callback) => {
 
   socket.emit('receive_message', roomId);
 
-  socket.on('receive_message', );
+  socket.on('receive_message');
 
   socket.on('chat_history', (data) => {
     if (callback) {

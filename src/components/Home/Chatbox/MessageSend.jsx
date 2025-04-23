@@ -27,8 +27,11 @@ import { GET_UPLOAD_DOCUMENT_LINK } from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import logger from 'redux-logger';
 import socket from '../../../utils/Socket';
-import { SendMessages } from '../../../utils/Socket.Io';
-import { setMessage } from '../../../Redux/features/message/messageSlice';
+import { RepalyMessages, SendMessages } from '../../../utils/Socket.Io';
+import {
+  addMessage,
+  setMessage,
+} from '../../../Redux/features/message/messageSlice';
 
 const MessageSend = ({ setfirst }) => {
   const modalRef = useRef(null);
@@ -48,7 +51,7 @@ const MessageSend = ({ setfirst }) => {
   const showReplay = useSelector((state) => state.user.showReplay);
   const messages = useSelector((state) => state.message.messages);
 
-  // console.log('messages', messages);
+  console.log('showReplay', details);
 
   const menuRef = useRef(null);
   const btnRef = useRef(null);
@@ -64,34 +67,42 @@ const MessageSend = ({ setfirst }) => {
 
     // setfirst(message121);
 
-    if (message121 === '') {
-      toast.error('Please enter a message');
-      // console.error('No user selected!');
+    // if (message121 === '') {
+    //   toast.error('Please enter a message');
+    //   // console.error('No user selected!');
+    //   return;
+    // }
+
+    // // if (!selectedUser?.userId) {
+    //   console.error('No user selected!');
+    //   return;
+    // }
+
+    if (showReplay) {
+      RepalyMessages(selectedUser, _id, message121, name, details);
+      // setShowReplayBox(false);
+      setMessage121('');
+
+      dispatch(VisiblityReplay(false));
+
       return;
+    } else {
+      SendMessages(selectedUser, _id, message121, name);
+      let room_ID = `${_id}-${selectedUser.userId}`;
+      socket.emit('message_receive', room_ID);
+
+      const handleMessage = (data) => {
+        dispatch(addMessage(data));
+      };
+
+      socket.on('latest_message', handleMessage);
+
+      setMessage121('');
     }
 
-    if (!selectedUser?.userId) {
-      console.error('No user selected!');
-      return;
-    }
-
-    // let room_ID = `${_id}-${selectedUser.userId}`;
-    // let receiverId = selectedUser.userId;
-
-    await SendMessages(selectedUser, _id, message121, name);
     // socket.emit('get_messages', room_ID);
     setMessage121('');
     dispatch(VisiblityReplay(false));
-
-
-    const handleMessage = async (data) => {
-      console.log('data', data);
-
-      // await dispatch(setMessage((prevMessages) => [...prevMessages, data]));
-    };
-
-    socket.on('receive_message', handleMessage);
-
   };
 
   useEffect(() => {
@@ -143,7 +154,7 @@ const MessageSend = ({ setfirst }) => {
 
   return (
     <>
-      <form action="" onSubmit={handleSendMessage}>
+      <form onSubmit={handleSendMessage}>
         <div
           className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
           ref={modalRef}
@@ -161,7 +172,6 @@ const MessageSend = ({ setfirst }) => {
             </div>
           )}
           <div
-            action=""
             className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
           >
             <button
@@ -190,7 +200,7 @@ const MessageSend = ({ setfirst }) => {
               <>
                 <div className="relative">
                   <button
-                    ref={btnRef}
+                    // ref={btnRef}
                     className="p-2 me-5"
                     onClick={() => setOpen(!open)}
                   >
@@ -199,11 +209,11 @@ const MessageSend = ({ setfirst }) => {
                 </div>
 
                 <button
-                  className={`${message121 == '' ? 'bg-slate-400' : 'bg-blue-600 hover:bg-blue-800'}  rounded-full text-white p-2 mx-1`}
+                  className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
                   onClick={handleSendMessage}
                   disabled={message121 === ''}
                 >
-                  <IoMdSend className="text-2xl" />
+                  <IoMdSend className="text-2xl " />
                 </button>
               </>
             )}

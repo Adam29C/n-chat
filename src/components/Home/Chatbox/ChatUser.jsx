@@ -22,6 +22,10 @@ import toast from 'react-hot-toast';
 import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 import { GET_ALL_USERS_URI_API } from '../../../services/users.service';
 import PreviewSendingInfo from './PreviewSendingInfo';
+import {
+  Get_Year_With_Time,
+  Get_Year_With_Time_With_Column_Saprate,
+} from '../../../helpers/helpers';
 
 const ChatUser = () => {
   const { _id, email, mobile, name, role } = JSON.parse(
@@ -89,7 +93,6 @@ const ChatUser = () => {
 
   const handleImageUpload = (event) => {
     alert();
-    console.log('imageUrl', event);
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
@@ -153,8 +156,6 @@ const ChatUser = () => {
       const response = await FOR_POST_REQUEST(apiRoutes.ADD_POINT_URI, payload);
 
       if (response.status === 'Success') {
-        console.log('OpenModal', OpenModal);
-
         setOpenModal(false);
         toast.success(response.message, {
           position: 'top-center',
@@ -268,7 +269,7 @@ const ChatUser = () => {
   return (
     <>
       <div
-        className={`sh-[11vh] h-fit md:h-[9vh] lg:h-[11vh] w-full p-3 md:p-0 flex items-center justify-between  ${darkMode ? 'bg-slate-950 border-l-0 md:border-l-2 border-gray-700' : 'border-none bg-white'} fixed top-0 z-10 md:static lg:static`}
+        className={`sh-[11vh] h-fit md:h-[9vh] lg:h-[9vh] w-full p-3 md:p-0 flex items-center justify-between  ${darkMode ? 'bg-slate-950 border-l-0 md:border-l-2 border-gray-700' : 'border-none bg-white'} fixed top-0 z-10 md:static lg:static`}
       >
         <div className="flex items-center">
           <button
@@ -290,13 +291,13 @@ const ChatUser = () => {
               </div>
             </div>
             <div>
-              <h1 className="text-base add-point-btn">
-                {selectedUser.userName}
-              </h1>
+              <h1 className="text- add-point-btn">{selectedUser.userName}</h1>
+              
               <span
                 className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} font-sizes`}
               >
-                Last Seen - {selectedUser.dateTime}
+                Last Seen -{' '}
+                {Get_Year_With_Time_With_Column_Saprate(selectedUser.lastSeen)}
               </span>
             </div>
           </div>
@@ -304,13 +305,13 @@ const ChatUser = () => {
 
         <div className="relative">
           <div className="flex items-center">
-            <button
+            {/* <button
               ref={btnRef}
               onClick={() => handleLogOutBtn()}
               className=" bg-blue-600 hover:bg-blue-800 rounded text-white p-1  add-point-btn"
             >
               Add Point
-            </button>
+            </button> */}
             <button ref={btnRef} className="p-1 ms-2" onClick={menuBtn}>
               <RxDragHandleDots2 className="text-2xl" />
             </button>

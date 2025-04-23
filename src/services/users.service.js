@@ -21,9 +21,9 @@ export const GET_ALL_USERS_URI_API = async (sendData) => {
 
 export const SEARCH_USERS_URI_API = async (sendData) => {
   try {
-    const response = await dataservice.post(
-      `${apiRoutes.SEARCH_USERS_UPI}`,
-      sendData,
+    // `${apiRoutes.SEARCH_USERS_UPI}`
+    const response = await dataservice.get(
+      `${apiRoutes.USERS_URI}?search=${sendData}`,
       {
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatUser from './ChatUser';
 import Messages from './Messages';
 import MessageSend from './MessageSend';
@@ -38,6 +38,39 @@ const Chatbox = () => {
     }
   };
 
+  useEffect(() => {
+    // if (messages.length > 0) {
+    // Give React a tick to render all elements before trying to scroll
+    setTimeout(() => {
+      const targetElement = document.getElementById('scroll-down');
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100); // Short delay ensures DOM has rendered
+    // }
+  }, []);
+
+  // console.log('messages', );
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const targetElement = document.getElementById('scroll-down');
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const handleClick = () => {
+    const targetElement = document.getElementById('scroll-down');
+
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
       {selectAi ? (
@@ -46,7 +79,7 @@ const Chatbox = () => {
         <div
           className={`w-[100%] md:inline-block  md:w-[60%] lg:w-[76%] h-screen ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  ${showSelectedUserBtn ? 'inline-block' : 'hidden'} `}
         >
-          <div className="w-[100%] h-full flex items-center justify-center">
+          <div className="w-[100%] h-full flex items-center justify-center main-bg">
             <div className="flex flex-col root-color">
               <img src={'./images/company-logo.svg'} alt="profile" />
             </div>
@@ -59,21 +92,24 @@ const Chatbox = () => {
           <ChatUser />
 
           <PreviewSendingInfo />
-          <div className="overflow-y-auto hide_scrollbar max-h-[10vh] md:max-h-[81vh] lg:max-h-[75vh]  ">
+
+          <div
+            className="custom-margin    md:overflow-y-auto lg:overflow-y-auto    flex flex-col gap-2
+            hide_scrollbar max-h-[10vh] md:max-h-[81vh] lg:max-h-[78vh] "
+          >
             {!PreviewImage && (
               <Messages
-                setfirst={setfirst}
-                first={first}
-                socket={socket}
+                // setfirst={setfirst}
+                // first={first}
+                // socket={socket}
                 setShowReplayBox={setShowReplayBox}
                 ShowReplayBox={ShowReplayBox}
               />
             )}
           </div>
 
-          <ReplayMessage />
-
           <div className=" w-full fixed bottom-0 md:static md:bottom-0 lg:static lg:z-0 ">
+            <ReplayMessage />
             <MessageSend setfirst={setfirst} first={first} socket={socket} />
           </div>
         </div>

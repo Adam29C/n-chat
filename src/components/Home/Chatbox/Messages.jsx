@@ -17,7 +17,10 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   );
 
   const [loading, setLoading] = useState(false);
+
+  const [groupedMessages, setGroupedMessages] = useState([]);
   const [tewsting, settewsting] = useState([]);
+
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
@@ -29,7 +32,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
 
   const adada = async () => {
     await GetSOketChatHistory(selectedUser, _id, (response) => {
-      dispatch(setMessage(response));
+      // dispatch(setMessage(response));
       // dispatch(setMessage([...messages, response]));
     });
 
@@ -50,58 +53,71 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
     adada();
   }, []);
 
-  // let room_ID = `${_id}-${selectedUser.userId}`;
+  console.log('messages', messages);
 
-  // useEffect(() => {
-  //   socket.emit('join_room', room_ID);
+  // const groupByDate = () => {
+  //   const grouped = messages
+  //     ?.reduce((acc, msg) => {
+  //       const date = msg.createTime.split('T')[0]; // "YYYY-MM-DD"
+  //       if (!acc[date]) acc[date] = [];
+  //       acc[date].push(msg);
+  //       return acc;
+  //     }, {})
+  //     .filter((item, index, array) => array.map((i) => i._id !== item._id));
 
-  //   socket.on('receive_message', (data) => {
-  //     dispatch(setMessage([...messages, data]));
-  //   });
+  //   const dates = Object.keys(grouped).sort();
 
-  //   return () => {
-  //     socket.off('receive_message');
-  //     socket.off('new_message_notification');
-  //   };
-  // }, [room_ID]);
+  //   // Save dates (for rendering sections)
+  //   settewsting(dates);
 
-  // let room_ID = `${_id}-${selectedUser.userId}`;
+  //   // If needed, also save grouped data
+  //   setGroupedMessages(grouped);
+  // };
 
-  // useEffect(() => {
-  //   socket.emit('join_room', room_ID);
+  // console.log('messages' ,messages);
 
-  //   socket.on('receive_message', (data) => {
-  //     dispatch(setMessage([...messages, data]));
-  //   });
+  const groupByDate = () => {
+    const grouped = messages.reduce((acc, msg) => {
+      const date = msg.createTime.split('T')[0];
+      acc[date] ??= [];
+      const i = acc[date].findIndex((m) => m._id === msg._id);
+      i === -1
+        ? acc[date].push(msg)
+        : new Date(msg.updatedTime) > new Date(acc[date][i].updatedTime) &&
+          (acc[date][i] = msg);
+      return acc;
+    }, {});
 
-  //   return () => {
-  //     socket.off('receive_message');
-  //     socket.off('new_message_notification');
-  //   };
-  // }, [first]);
+    const dates = Object.keys(grouped).sort();
 
-  // console.log('messages', messages);
+    // Save dates (for rendering sections)
+    settewsting(dates);
 
-  // useEffect(() => {
-  //   adada();
-  // }, [first]);
+    // If needed, also save grouped data
+    setGroupedMessages(grouped);
+  };
 
-  // var socket = socketIOClient(base_url);
-  // useEffect(() => {
-  //   socket.on('send_message', async (data) => {});
-  // }, [socket]);
+  useEffect(() => {
+    groupByDate();
+  }, [messages]);
 
-  // useEffect(() => {
-  //   settewsting(messages);
-  // }, [messages]);
+  // const handleClick = () => {
+  //   const targetElement = document.getElementById('scroll-down');
 
+  //   if (targetElement) {
+  //     targetElement.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // };
   return (
     <>
       {/* <div className="" style={{ minHeight: "calc(91vh - 8vh)" }}> */}
+      {/* <button onClick={handleClick}>111111sclick</button> */}
+
+      {/* <div id="scroll-up"></div> */}
       <div
         className={`pt-3  ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
-        style={{ minHeight: 'calc(89vh - 10vh)' }}
-        // style={{ minHeight: 'calc(91vh - 10vh)' }}
+        // style={{ minHeight: 'calc(89vh - 10vh)' }}
+        style={{ minHeight: 'calc(96vh - 3vh)' }}
       >
         {loadingMessages ? (
           <MessageLoader />
@@ -114,18 +130,35 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
                 </p>
               </div>
             ) : (
-              messages?.map((item, index) => (
-                <SingleMessage
-                  key={item._id || index}
-                  data={item}
-                  setShowReplayBox={setShowReplayBox}
-                />
-              ))
+              groupedMessages && (
+                <>
+                  {Object.keys(groupedMessages)
+                    .sort()
+                    .map((date) => (
+                      <div key={date}>
+                        <div className=" flex items-center justify-center ">
+                          <span className="bg-gray-300 rounded-lg  px-3 py-1 gap-3">
+                            {date}
+                          </span>
+                        </div>
+
+                        {groupedMessages[date]?.map((item, index) => (
+                          <SingleMessage
+                            key={item._id || index}
+                            data={item}
+                            setShowReplayBox={setShowReplayBox}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </>
+              )
             )}
           </>
         )}
       </div>
       <Toaster />
+      {/* <div id="scroll-down"></div> */}
     </>
   );
 };
