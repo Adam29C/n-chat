@@ -37,6 +37,7 @@ import Search from './Search';
 import { CiSearch } from 'react-icons/ci';
 import { IoCloseSharp } from 'react-icons/io5';
 import { SEARCH_USERS_URI_API } from '../../../services/users.service';
+import socket from '../../../utils/Socket';
 const MenuComponent = () => {
   const [open, setOpen] = useState(false);
   const [OpenModal, setOpenModal] = useState(false);
@@ -372,27 +373,32 @@ const MenuComponent = () => {
   };
 
   const getAllUser = async () => {
-    const throttledFetch = throttle(async () => {
-      try {
-        // const res = await SEARCH_USERS_URI_API(search);
-        // if (res?.status === 'error') {
-        //   // dispatch(setOtherUsers([]));
-        //   setuserList([]);
-        // } else {
-        //   setuserList(res?.data?.users || res.mappingTable);
-        //   // dispatch(setOtherUsers(res?.data?.users || res.mappingTable));
-        // }
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    }, 300);
+    console.log('socket', search);
 
-    throttledFetch();
+    socket.emit('get_user_list', { page: '', limit: '', search: search });
+
+    const handleUserList = (data) => {
+      const newData = data.users || [];
+
+      console.log('newData', newData);
+
+      if (newData.length > 0) {
+        setuserList(newData);
+        // dispatch(setOtherUsers(newData));
+      } else {
+        setuserList(otherUsers);
+        // dispatch(setOtherUsers(otherUsers));
+      }
+
+      socket.off('user_list', handleUserList);
+    };
+
+    socket.on('user_list', handleUserList);
   };
 
   useEffect(() => {
     // if (search != '') {
-    // getAllUser();
+    getAllUser();
     // }
   }, [search]);
 
@@ -525,7 +531,7 @@ const MenuComponent = () => {
                 <div
                   className={` overflow-y-auto hide_scrollbar px-3 max-h-[73vh] md:max-h-[78vh] lg:max-h-[72vh] ${false ? '' : darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}
                 >
-                  {otherUsers?.map((item, index) => (
+                  {userList?.map((item, index) => (
                     <>
                       <div class="flex  border py-3 bg-slate-200 rounded-md my-2">
                         <div class="avatar false px-2">

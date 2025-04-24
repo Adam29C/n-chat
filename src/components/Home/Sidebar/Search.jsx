@@ -270,37 +270,10 @@ const Search = ({ title }) => {
         dispatch(setOtherUsers(otherUsers));
       }
 
-      // if (newData.length === 0) {
-      //   setHasMore(false);
-      // } else {
-      // dispatch(setOtherUsers([...otherUsers, ...newData]));
-      // setPage(data.page + 1); // page update from backend
-      // }
-
-      // setLoading(false);
-      // isFetchingRef.current = false;
-
-      // cleanup handler
       socket.off('user_list', handleUserList);
     };
 
     socket.on('user_list', handleUserList);
-
-    // const throttledFetch = throttle(async () => {
-    //   try {
-    //     const res = await SEARCH_USERS_URI_API(search);
-
-    //     if (res?.status === 'error') {
-    //       dispatch(setOtherUsers([]));
-    //     } else {
-    //       dispatch(setOtherUsers(res?.data?.users || res.mappingTable));
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching users:', error);
-    //   }
-    // }, 300);
-
-    // throttledFetch();
   };
 
   useEffect(() => {
