@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChatUser from './ChatUser';
 import Messages from './Messages';
 import MessageSend from './MessageSend';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AiMessageBox from '../Ai/AiMessageBox';
 import { base_url } from '../../../utils/api_config';
 import { FiSend } from 'react-icons/fi';
@@ -11,9 +11,15 @@ import socketIOClient from 'socket.io-client';
 import PreviewSendingInfo from './PreviewSendingInfo';
 import ReplayMessage from './ReplayMessage';
 import socket from '../../../utils/Socket';
+import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 
 const Chatbox = () => {
   // const socket = socketIOClient(base_url);
+  const dispatch = useDispatch();
+
+  const { _id, email, mobile, name, role } = JSON.parse(
+    localStorage.getItem('info')
+  );
 
   const showSelectedUserBtn = useSelector(
     (state) => state.showSelectedBtn.value
@@ -23,6 +29,9 @@ const Chatbox = () => {
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const selectAi = useSelector((state) => state.ai.selectAi);
   const PreviewImage = useSelector((state) => state.user.PreviewImage);
+
+  const messages = useSelector((state) => state.message.messages);
+  const otherUsers = useSelector((state) => state.user.otherUsers);
 
   const [first, setfirst] = useState('testing');
   const [ShowReplayBox, setShowReplayBox] = useState(true);
@@ -70,6 +79,21 @@ const Chatbox = () => {
       targetElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // socket.emit('mark_read', { room: roomId, messageIds: noReadedId });
+
+  useEffect(() => {
+    const noReadedId = messages
+      .filter((msg) => !msg.isRead)
+      .map((msg) => msg._id);
+
+    const room_ID = `${_id}-${selectedUser?.userId}`;
+
+    if (noReadedId.length > 0) {
+      console.log('mark read on');
+      socket.emit('mark_read', { room: room_ID, messageIds: noReadedId });
+    }
+  }, [messages, selectedUser?._id]);
 
   return (
     <>

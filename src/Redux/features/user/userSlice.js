@@ -3,12 +3,15 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   authUser: {},
   otherUsers: [],
+  updatedUsers: [],
+
   selectedUser: null,
   onlineUsers: null,
   showReplay: false,
   PreviewImage: false,
   getDocuments: {},
   details: {},
+  showTesting: false,
 };
 
 export const userSlice = createSlice({
@@ -20,6 +23,9 @@ export const userSlice = createSlice({
     },
     setOtherUsers: (state, action) => {
       state.otherUsers = action.payload;
+    },
+    newUpdatedUsers: (state, action) => {
+      state.otherUsers.push(action.payload);
     },
     setSelectedUsers: (state, action) => {
       state.selectedUser = action.payload;
@@ -39,6 +45,9 @@ export const userSlice = createSlice({
     UploadDocument: (state, action) => {
       state.getDocuments = action.payload;
     },
+    ManageShowTesting: (state, action) => {
+      state.showTesting = action.payload;
+    },
   },
 });
 
@@ -51,6 +60,8 @@ export const {
   setOnlineUsers,
   ManageReplayDetails,
   VisiblityPreviewImage,
+  newUpdatedUsers,
+  ManageShowTesting,
 } = userSlice.actions;
 
 export default userSlice.reducer;

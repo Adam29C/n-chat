@@ -16,7 +16,7 @@ export const selectUserSlice = createSlice({
       state.error = null;
     },
     sendMessages: (state, action) => {
-      console.log('action.payloadaction.payload', action.payload);
+      // console.log('action.payloadaction.payload', action.payload);
 
       state.messages = [...state.messages, action.payload];
       state.error = null;

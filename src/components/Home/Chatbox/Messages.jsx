@@ -9,12 +9,16 @@ import { base_url } from '../../../utils/api_config';
 import socketIOClient from 'socket.io-client';
 import { GetSOketChatHistory } from '../../../utils/Socket.Io';
 import socket from '../../../utils/Socket';
+import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 
 // import useGetSocketMessage from '../../../context/useGetSocketMessage';
-const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
+const Messages = ({ first, ShowReplayBox, setShowReplayBox  }) => {
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
+
+
+  
 
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +29,9 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
   const messages = useSelector((state) => state.message.messages);
+  const otherUsers = useSelector((state) => state.user.otherUsers);
+
+  let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
   const loadingMessages = useSelector((state) => state.message.loadingMessages);
 
@@ -53,8 +60,6 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
     adada();
   }, []);
 
-  console.log('messages', messages);
-
   // const groupByDate = () => {
   //   const grouped = messages
   //     ?.reduce((acc, msg) => {
@@ -74,7 +79,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   //   setGroupedMessages(grouped);
   // };
 
-  // console.log('messages' ,messages);
+  // console.log('messages', messages);
 
   const groupByDate = () => {
     const grouped = messages.reduce((acc, msg) => {
@@ -108,6 +113,17 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   //     targetElement.scrollIntoView({ behavior: 'smooth' });
   //   }
   // };
+
+  // console.log('noReadedId', noReadedId);
+  // const room_ID = `${_id}-${selectedUser?.userId}`;
+  // useEffect(() => {
+  //   console.log(' { room: roomId, messageIds: noReadedId }', {
+  //     room: room_ID,
+  //     messageIds: noReadedId,
+  //   });
+  //   // socket.emit('mark_read', { room: room_ID, messageIds: noReadedId });
+  // }, [room_ID]);
+
   return (
     <>
       {/* <div className="" style={{ minHeight: "calc(91vh - 8vh)" }}> */}

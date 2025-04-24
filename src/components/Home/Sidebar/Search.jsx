@@ -203,13 +203,16 @@ import {
   GET_ALL_USERS_URI_API,
   SEARCH_USERS_URI_API,
 } from '../../../services/users.service';
+import socket from '../../../utils/Socket';
 const Search = ({ title }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const darkMode = useSelector((state) => state.darkTheme.value);
-  // const otherUsers = useSelector((state) => state.user.otherUsers);
+  const otherUsers = useSelector((state) => state.user.otherUsers);
+
+  console.log('otherUsers', otherUsers);
 
   const getAllUser12 = async () => {
     // const res = await GET_ALL_USERS_URI_API();
@@ -225,7 +228,7 @@ const Search = ({ title }) => {
   };
   const handleCancelSearchBtn = () => {
     setSearch('');
-    dispatch(setOtherUsers(data));
+    // dispatch(setOtherUsers(data));
   };
 
   const throttle = (func, limit) => {
@@ -252,27 +255,58 @@ const Search = ({ title }) => {
   };
 
   const getAllUser = async () => {
-    const throttledFetch = throttle(async () => {
-      try {
-        const res = await SEARCH_USERS_URI_API(search);
+    console.log('socket', search);
 
-        if (res?.status === 'error') {
-          dispatch(setOtherUsers([]));
-        } else {
-          dispatch(setOtherUsers(res?.data?.users || res.mappingTable));
-        }
-      } catch (error) {
-        console.error('Error fetching users:', error);
+    socket.emit('get_user_list', { page: '', limit: '', search: search });
+
+    const handleUserList = (data) => {
+      const newData = data.users || [];
+
+      console.log('newData', newData);
+
+      if (newData.length > 0) {
+        dispatch(setOtherUsers(newData));
+      } else {
+        dispatch(setOtherUsers(otherUsers));
       }
-    }, 300);
 
-    throttledFetch();
+      // if (newData.length === 0) {
+      //   setHasMore(false);
+      // } else {
+      // dispatch(setOtherUsers([...otherUsers, ...newData]));
+      // setPage(data.page + 1); // page update from backend
+      // }
+
+      // setLoading(false);
+      // isFetchingRef.current = false;
+
+      // cleanup handler
+      socket.off('user_list', handleUserList);
+    };
+
+    socket.on('user_list', handleUserList);
+
+    // const throttledFetch = throttle(async () => {
+    //   try {
+    //     const res = await SEARCH_USERS_URI_API(search);
+
+    //     if (res?.status === 'error') {
+    //       dispatch(setOtherUsers([]));
+    //     } else {
+    //       dispatch(setOtherUsers(res?.data?.users || res.mappingTable));
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching users:', error);
+    //   }
+    // }, 300);
+
+    // throttledFetch();
   };
 
   useEffect(() => {
-    if (search != '') {
-      getAllUser();
-    }
+    // if (search != '') {
+    getAllUser();
+    // }
   }, [search]);
 
   return (

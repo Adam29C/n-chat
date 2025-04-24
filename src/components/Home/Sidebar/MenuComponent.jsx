@@ -34,6 +34,9 @@ import toast from 'react-hot-toast';
 // import { LoginUser } from '../../../utils/userApiCall';
 import SingleUser from './SingleUser';
 import Search from './Search';
+import { CiSearch } from 'react-icons/ci';
+import { IoCloseSharp } from 'react-icons/io5';
+import { SEARCH_USERS_URI_API } from '../../../services/users.service';
 const MenuComponent = () => {
   const [open, setOpen] = useState(false);
   const [OpenModal, setOpenModal] = useState(false);
@@ -41,6 +44,8 @@ const MenuComponent = () => {
   const [SetRowData, setSetRowData] = useState([]);
 
   const [CreateStatus, setCreateStatus] = useState(0);
+  const [search, setSearch] = useState('');
+  const [userList, setuserList] = useState([]);
 
   // const [darkMode, setDarkMode] = useState(false);
   const otherUsers = useSelector((state) => state.user.otherUsers);
@@ -332,6 +337,67 @@ const MenuComponent = () => {
     }
   };
 
+  // ------------manage search -----------------
+
+  const handleSearchInput = (e) => {
+    setSearch(e.target.value);
+  };
+  const handleCancelSearchBtn = () => {
+    setSearch('');
+    // dispatch(setOtherUsers(data));
+    setuserList(userList);
+  };
+
+  const throttle = (func, limit) => {
+    let lastFunc;
+    let lastRan;
+
+    return function (...args) {
+      if (!lastRan) {
+        func.apply(this, args);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(
+          () => {
+            if (Date.now() - lastRan >= limit) {
+              func.apply(this, args);
+              lastRan = Date.now();
+            }
+          },
+          limit - (Date.now() - lastRan)
+        );
+      }
+    };
+  };
+
+  const getAllUser = async () => {
+    const throttledFetch = throttle(async () => {
+      try {
+        // const res = await SEARCH_USERS_URI_API(search);
+        // if (res?.status === 'error') {
+        //   // dispatch(setOtherUsers([]));
+        //   setuserList([]);
+        // } else {
+        //   setuserList(res?.data?.users || res.mappingTable);
+        //   // dispatch(setOtherUsers(res?.data?.users || res.mappingTable));
+        // }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }, 300);
+
+    throttledFetch();
+  };
+
+  useEffect(() => {
+    // if (search != '') {
+    // getAllUser();
+    // }
+  }, [search]);
+
+  // console.log('userList', userList);
+
   return (
     <>
       <div className="relative">
@@ -429,12 +495,60 @@ const MenuComponent = () => {
           <>
             {CreateStatus === 7 ? (
               <>
-                <Search />
+                <div className="w-full pt-4   bg-slate-100 sh-[6vh] h-fit md:h-[7vh] lg:h-[6vh] flex justify-center shadow-border-radius  border-grey-200 ">
+                  <label
+                    className={`w-[95%] border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-200 border-gray-300'}  rounded-full px-1 flex items-center font-semibold `}
+                  >
+                    <input
+                      type="text"
+                      className="grow outline-none bg-transparent py-2 pl-4"
+                      placeholder="Search people"
+                      value={search}
+                      onChange={handleSearchInput}
+                    />
+                    {search.length ? (
+                      <button
+                        className={` p-2 ${darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700 ' : 'text-slate-700 hover:text-white hover:bg-slate-400 '} rounded-full `}
+                        onClick={handleCancelSearchBtn}
+                      >
+                        <IoCloseSharp />
+                      </button>
+                    ) : (
+                      <CiSearch
+                        className={`text-4xl p-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'} `}
+                      />
+                    )}
+                  </label>
+                </div>
+
+                {/* <Search /> */}
                 <div
                   className={` overflow-y-auto hide_scrollbar px-3 max-h-[73vh] md:max-h-[78vh] lg:max-h-[72vh] ${false ? '' : darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}
                 >
                   {otherUsers?.map((item, index) => (
-                    <SingleUser data={item} key={index} />
+                    <>
+                      <div class="flex  border py-3 bg-slate-200 rounded-md my-2">
+                        <div class="avatar false px-2">
+                          <div class="w-12 rounded-full">
+                            <img
+                              alt="profile"
+                              src="./images/default_profile.png"
+                            />
+                          </div>
+                        </div>
+                        <div class="flex justify-between  items-center    rounded-lg">
+                          <div class="text-sm w-full ellipsis ">
+                            <h1></h1>
+                            <div class="flex flex-col">
+                              <span class="text-lg px-2 last-message-font">
+                                {item?.userName}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* <SingleUser data={item} key={index} /> */}
+                    </>
                   ))}
                 </div>
               </>

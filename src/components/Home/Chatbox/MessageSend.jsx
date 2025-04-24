@@ -51,8 +51,6 @@ const MessageSend = ({ setfirst }) => {
   const showReplay = useSelector((state) => state.user.showReplay);
   const messages = useSelector((state) => state.message.messages);
 
-  console.log('showReplay', details);
-
   const menuRef = useRef(null);
   const btnRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -64,6 +62,12 @@ const MessageSend = ({ setfirst }) => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+
+    // console.log('e.key', e);
+
+    if (e.type === 'submit') {
+      setOpen(false);
+    }
 
     // setfirst(message121);
 
@@ -99,9 +103,6 @@ const MessageSend = ({ setfirst }) => {
 
       setMessage121('');
     }
-
-    // socket.emit('get_messages', room_ID);
-    setMessage121('');
     dispatch(VisiblityReplay(false));
   };
 
@@ -154,72 +155,72 @@ const MessageSend = ({ setfirst }) => {
 
   return (
     <>
-      <form onSubmit={handleSendMessage}>
-        <div
-          className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
-          ref={modalRef}
-        >
-          {isPickerVisible && (
-            <div className="absolute bottom-20 md:bottom-32 lg:bottom-20 ">
-              <Picker
-                data={data}
-                previewPosition="none"
-                onEmojiSelect={(e) => {
-                  // setCurrentEmoji(e.native);
-                  setMessage121(message121 + e.native);
-                }}
-              />
-            </div>
-          )}
-          <div
-            className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
-          >
-            <button
-              className={`${darkMode ? 'bg-slate-700 hover:bg-slate-900 text-white' : 'bg-slate-100 hover:bg-slate-300'} rounded-full  p-2 mx-1`}
-              onClick={() => setPickerVisible(!isPickerVisible)}
-              type="button"
-            >
-              <MdOutlineEmojiEmotions className="text-2xl" />
-            </button>
-
-            <div className="w-[90%] ml-0 mr-2 my-2 ">
-              <input
-                type="text"
-                name="message"
-                value={message121}
-                onChange={(e) => setMessage121(e.target.value)}
-                placeholder="Message"
-                className={`outline-none py-1 px-2 rounded w-full bg-transparent`}
-              />
-            </div>
-            {loading ? (
-              <span className="flex items-center justify-center bg-blue-600 text-white rounded-full p-2 mx-1">
-                <span className="loading loading-spinner"></span>
-              </span>
-            ) : (
-              <>
-                <div className="relative">
-                  <button
-                    // ref={btnRef}
-                    className="p-2 me-5"
-                    onClick={() => setOpen(!open)}
-                  >
-                    <FaPlus className="text-2xl" />
-                  </button>
-                </div>
-
-                <button
-                  className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
-                  onClick={handleSendMessage}
-                  disabled={message121 === ''}
-                >
-                  <IoMdSend className="text-2xl " />
-                </button>
-              </>
-            )}
+      {/* <form onSubmit={handleSendMessage}> */}
+      <div
+        className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
+        ref={modalRef}
+      >
+        {isPickerVisible && (
+          <div className="absolute bottom-20 md:bottom-32 lg:bottom-20 ">
+            <Picker
+              data={data}
+              previewPosition="none"
+              onEmojiSelect={(e) => {
+                // setCurrentEmoji(e.native);
+                setMessage121(message121 + e.native);
+              }}
+            />
           </div>
+        )}
+        <div
+          className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
+        >
+          <button
+            className={`${darkMode ? 'bg-slate-700 hover:bg-slate-900 text-white' : 'bg-slate-100 hover:bg-slate-300'} rounded-full  p-2 mx-1`}
+            onClick={() => setPickerVisible(!isPickerVisible)}
+            type="button"
+          >
+            <MdOutlineEmojiEmotions className="text-2xl" />
+          </button>
+
+          <div className="w-[90%] ml-0 mr-2 my-2 ">
+            <input
+              type="text"
+              name="message"
+              value={message121}
+              onChange={(e) => setMessage121(e.target.value)}
+              placeholder="Message"
+              className={`outline-none py-1 px-2 rounded w-full bg-transparent`}
+            />
+          </div>
+          {loading ? (
+            <span className="flex items-center justify-center bg-blue-600 text-white rounded-full p-2 mx-1">
+              <span className="loading loading-spinner"></span>
+            </span>
+          ) : (
+            <>
+              <div className="relative">
+                <button
+                  // ref={btnRef}
+                  className="p-2 me-5"
+                  onClick={() => setOpen(!open)}
+                >
+                  <FaPlus className="text-2xl" />
+                </button>
+              </div>
+
+              <button
+                className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
+                onClick={handleSendMessage}
+                disabled={message121 === ''}
+              >
+                <IoMdSend className="text-2xl " />
+              </button>
+            </>
+          )}
         </div>
-      </form>
+      </div>
+      {/* </form> */}
       <Pophover
         customClass={' right-[5.25rem]  bottom-[2.25rem]'}
         setOpen={setOpen}

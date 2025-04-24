@@ -20,6 +20,7 @@ import SingleUser from '../Sidebar/SingleUser';
 import {
   VisiblityReplay,
   ManageReplayDetails,
+  setOtherUsers,
 } from '../../../Redux/features/user/userSlice';
 import { FiMessageCircle } from 'react-icons/fi';
 import { base_url } from '../../../utils/api_config';
@@ -32,6 +33,7 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   );
 
   const messages = useSelector((state) => state.message.messages);
+  let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
   // console.log('messages', messages);
 
@@ -46,6 +48,7 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   const authUser = useSelector((state) => state.user);
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const otherUsers = useSelector((state) => state.user.otherUsers);
+
   const details = useSelector((state) => state.user.details);
 
   const scroll = useRef();
@@ -128,7 +131,7 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   let msgID = '';
   const forwordMessage = (messageId) => {
     document.getElementById('my_modal_5').showModal();
-    // console.log('forwordmsg', messageId._id);
+
     msgID += messageId._id;
     setforwordmsg(messageId.message);
     setMsgId(messageId._id);
@@ -145,7 +148,6 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   };
 
   return (
-    // <div ref={scroll}>
     <div>
       <Pophover
         customClass={_id === data.sender ? ' top-5  right-5' : ' left-5 top-5'}
@@ -172,183 +174,107 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
         className={`chat bg-gray-200   ${_id === data.sender ? 'chat-end bg-dark' : 'chat-start'}`}
       >
         <>
-          {
-            _id === data.sender && data?.replyName != null ? (
-              <>
-                <div className="mb-2 max-w-[80%] self-end">
+          {_id === data.sender && data?.replyName != null ? (
+            <>
+              <div className="mb-2 max-w-[80%] self-end">
+                <div
+                  className="bg-gray-100   border-l-4  rounded-t-md px-3 py-1"
+                  style={{
+                    borderLeft: '4px solid',
+                    borderImage:
+                      'linear-gradient(97.51deg, #1c3e35 -39.91%, #4aa48c 117.67%) 1',
+                  }}
+                >
+                  <p className="text-xs font-semibold text-gray-600">
+                    You replied to {data.replyName != null && data.replyName}
+                  </p>
+                  <p className="text-sm text-gray-800 truncate">
+                    {data?.replyMessage}
+                  </p>
+                </div>
+                <div className="replay-message-bg bg-green-500 text-white rounded-b-md rounded-tr-md px-4 py-1 ">
+                  {data?.message}
+                </div>
+                <div className="chat-footer text-xs text-right  text-gray-600 ">
+                  {formatedTime}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {data.images.length > 0 &&
+              data.images[0] !== '' &&
+              data.message !== '' ? (
+                // ✅ Condition 1: Image + Message
+
+                <>
                   <div
-                    className="bg-gray-100   border-l-4  rounded-t-md px-3 py-1"
-                    style={{
-                      borderLeft: '4px solid',
-                      borderImage:
-                        'linear-gradient(97.51deg, #1c3e35 -39.91%, #4aa48c 117.67%) 1',
-                    }}
+                    className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
+  ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
+                    onMouseEnter={() => setHover(true)}
+                    onMouseLeave={() => setHover(false)}
                   >
-                    <p className="text-xs font-semibold text-gray-600">
-                      You replied to {data.replyName != null && data.replyName}
-                    </p>
-                    <p className="text-sm text-gray-800 truncate">
-                      {data?.replyMessage}
-                    </p>
+                    <span className="flex-grow w-full  custom-message-font-size">
+                      <div className="flex justify-end">
+                        {!data.isDeleted && hover && (
+                          <FaChevronDown
+                            onClick={ShowHiddenTabs}
+                            className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
+                          />
+                        )}
+                      </div>
+
+                      <img
+                        src={data.images[0]}
+                        alt="img"
+                        height={100}
+                        width={200}
+                      />
+                      <div>{data.message}</div>
+                    </span>
                   </div>
-                  <div className="replay-message-bg bg-green-500 text-white rounded-b-md rounded-tr-md px-4 py-1 ">
-                    {data?.message}
-                  </div>
-                  <div className="chat-footer text-xs text-right  text-gray-600 ">
+
+                  <div className="chat-footer text-xs text-gray-500">
                     {formatedTime}
                   </div>
-                </div>
-              </>
-            ) : (
-              // {data.replyName == null && (
-              <>
-                {/* <div
-                  className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
-  ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
-                  onMouseEnter={() => setHover(true)}
-                  onMouseLeave={() => setHover(false)}
-                >
-                  <span className="flex-grow w-full  custom-message-font-size">
-                    <div className="flex justify-end">
-                      {!data.isDeleted && hover && (
-                        <FaChevronDown
-                          onClick={ShowHiddenTabs}
-                          className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
-                        />
-                      )}
-                    </div> */}
-                {/* {data.images.length > 0 && data.message !== '' ? (
-                      <img
-                        src={data.images[0]}
-                        alt=""
-                        height={20}
-                        width={200}
-                      />
-                    ) : data.images.length === 0 ||
-                      (data.images[0].length === '' && data.message == '') ? (
-                      <img
-                        src={data.images[0]}
-                        alt="ss"
-                        height={20}
-                        width={200}
-                      />
-                    ) : (
-                      ''
-                    )} */}
-
-                {data.images.length > 0 &&
+                </>
+              ) : data.images.length > 0 &&
                 data.images[0] !== '' &&
-                data.message !== '' ? (
-                  // ✅ Condition 1: Image + Message
+                data.message === '' ? (
+                // ✅ Condition 2: Only Image
 
-                  <>
-                    <div
-                      className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
-  ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
-                      onMouseEnter={() => setHover(true)}
-                      onMouseLeave={() => setHover(false)}
-                    >
-                      <span className="flex-grow w-full  custom-message-font-size">
-                        <div className="flex justify-end">
-                          {!data.isDeleted && hover && (
-                            <FaChevronDown
-                              onClick={ShowHiddenTabs}
-                              className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
-                            />
-                          )}
-                        </div>
-
-                        <img
-                          src={data.images[0]}
-                          alt="img"
-                          height={100}
-                          width={200}
-                        />
-                        <div>{data.message}</div>
-                      </span>
-                    </div>
-
-                    <div className="chat-footer text-xs text-gray-500">
-                      {formatedTime}
-                    </div>
-                  </>
-                ) : data.images.length > 0 &&
-                  data.images[0] !== '' &&
-                  data.message === '' ? (
-                  // ✅ Condition 2: Only Image
-
-                  <>
-                    <div
-                      className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
+                <>
+                  <div
+                    className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
 ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
-                      onMouseEnter={() => setHover(true)}
-                      onMouseLeave={() => setHover(false)}
-                    >
-                      <span className="flex-grow w-full  custom-message-font-size">
-                        <div className="flex justify-end">
-                          {!data.isDeleted && hover && (
-                            <FaChevronDown
-                              onClick={ShowHiddenTabs}
-                              className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
-                            />
-                          )}
-                        </div>
-                        <img
-                          src={data.images[0]}
-                          alt="img-only"
-                          height={100}
-                          width={200}
-                        />
-                      </span>
-                    </div>
-
-                    <div className="chat-footer text-xs text-gray-500">
-                      {formatedTime}
-                    </div>
-                  </>
-                ) : data.images.length === 0 || data.images[0] === '' ? (
-                  data.message !== '' && (
-                    // ✅ Condition 3: Only Message
-                    <>
-                      <div
-                        className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
-${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
-                        onMouseEnter={() => setHover(true)}
-                        onMouseLeave={() => setHover(false)}
-                      >
-                        <span className="flex-grow w-full  custom-message-font-size">
-                          <div className="flex justify-end">
-                            {!data.isDeleted && hover && (
-                              <FaChevronDown
-                                onClick={ShowHiddenTabs}
-                                className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
-                              />
-                            )}
-                          </div>
-                          <div>
-                            {data.message === 'This message is deleted' ? (
-                              <>
-                                <i className="flex items-center  text-xs">
-                                  <GoCircleSlash />
-                                  &nbsp;
-                                  {data.message !== '' && data?.message}
-                                </i>
-                              </>
-                            ) : (
-                              data.message !== '' && data?.message
-                            )}
-                          </div>
-                        </span>
+                    onMouseEnter={() => setHover(true)}
+                    onMouseLeave={() => setHover(false)}
+                  >
+                    <span className="flex-grow w-full  custom-message-font-size">
+                      <div className="flex justify-end">
+                        {!data.isDeleted && hover && (
+                          <FaChevronDown
+                            onClick={ShowHiddenTabs}
+                            className="opacity-100 right-0 transition-opacity duration-[2000ms] ease-in-out"
+                          />
+                        )}
                       </div>
+                      <img
+                        src={data.images[0]}
+                        alt="img-only"
+                        height={100}
+                        width={200}
+                      />
+                    </span>
+                  </div>
 
-                      <div className="chat-footer text-xs text-gray-500">
-                        {formatedTime}
-                      </div>
-                    </>
-                  )
-                ) : null}
-
-                {/* {data.images.length > 0 && data.images[0] !== '' ? (
+                  <div className="chat-footer text-xs text-gray-500">
+                    {formatedTime}
+                  </div>
+                </>
+              ) : data.images.length === 0 || data.images[0] === '' ? (
+                data.message !== '' && (
+                  // ✅ Condition 3: Only Message
                   <>
                     <div
                       className={`max-w-[50%] chat-bubble relative px-4 py-2 flex items-center gap-2 shadow-md transition duration-200 
@@ -365,14 +291,19 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
                             />
                           )}
                         </div>
-
-                        <img
-                          src={data.images[0]}
-                          alt=""
-                          height={20}
-                          width={200}
-                        />
-                        {data.message !== '' && data?.message}
+                        <div>
+                          {data.message === 'This message is deleted' ? (
+                            <>
+                              <i className="flex items-center  text-xs">
+                                <GoCircleSlash />
+                                &nbsp;
+                                {data.message !== '' && data?.message}
+                              </i>
+                            </>
+                          ) : (
+                            data.message !== '' && data?.message
+                          )}
+                        </div>
                       </span>
                     </div>
 
@@ -380,40 +311,10 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
                       {formatedTime}
                     </div>
                   </>
-                ) : data.images.length > 0 && data.message === '' ? (
-                  ''
-                ) : (
-                  ''
-                )}
-
-                {data.isDeleted ? (
-                  <>
-                    <i className="flex items-center  text-xs">
-                      <GoCircleSlash />
-                      {data.message !== '' && data?.message}
-                    </i>
-                  </>
-                ) : (
-""
-
-                  // data.message !== '' && data?.message
-                )} */}
-                {/* </span>
-                </div>
-
-                <div className="chat-footer text-xs text-gray-500">
-                  {formatedTime}
-                </div> */}
-              </>
-            )
-            // )}
-          }
-
-          {/* {_id !== data.sender ? (
-              ''
-            ) : (
-              <FaCheckDouble color={data.isRead ? 'grey' : 'blue'} />
-            )} */}
+                )
+              ) : null}
+            </>
+          )}
         </>
       </div>
 

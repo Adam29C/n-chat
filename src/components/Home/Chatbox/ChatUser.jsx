@@ -27,7 +27,9 @@ import {
   Get_Year_With_Time_With_Column_Saprate,
 } from '../../../helpers/helpers';
 
-const ChatUser = () => {
+const ChatUser = ({ abcd }) => {
+  // console.log('abcd', abcd);
+
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
@@ -47,6 +49,16 @@ const ChatUser = () => {
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const otherUsers = useSelector((state) => state.user.otherUsers);
+
+  // console.log('selectedUser', selectedUser);
+
+  const messages = useSelector((state) => state.message.messages);
+
+  let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
+
+
+  // console.log('cjaj users =' ,noReadedId);
+  
 
   const { socket, onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(selectedUser._id);
@@ -266,6 +278,20 @@ const ChatUser = () => {
     }
   };
 
+  // console.log('noReadedId', noReadedId);
+  // const room_ID = `${_id}-${selectedUser?.userId}`;
+  // useEffect(() => {
+  //   console.log(' { room: roomId, messageIds: noReadedId }', {
+  //     room: room_ID,
+  //     messageIds: noReadedId,
+  //   });
+  //   // socket.emit('mark_read', { room: room_ID, messageIds: noReadedId });
+  // }, [room_ID]);
+
+  // const showTesting = useSelector((state) => state.user.showTesting);
+
+  // console.log('showTesting', showTesting);
+
   return (
     <>
       <div
@@ -292,7 +318,7 @@ const ChatUser = () => {
             </div>
             <div>
               <h1 className="text- add-point-btn">{selectedUser.userName}</h1>
-              
+
               <span
                 className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} font-sizes`}
               >

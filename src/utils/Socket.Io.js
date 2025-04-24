@@ -64,7 +64,9 @@ export const SendMessages = (selectedUser, _id, message, name) => {
     dateTime: convertTimestamp(new Date().toISOString()),
     dateTimestamp: Date.now(),
   });
-  
+  socket.on('update_user_list_entry', (data) => {
+    // console.log('update_user_list_entry', data);
+  });
 
   socket.emit('get_messages', room_ID);
 };
@@ -107,6 +109,9 @@ export const RepalyMessages = (selectedUser, _id, message, name, details) => {
     dateTimestamp: Date.now(),
   });
 
+  socket.on('update_user_list_entry', (data) => {
+    console.log('update_user_list_entry', data);
+  });
   socket.emit('get_messages', room_ID);
 };
 
@@ -123,7 +128,7 @@ export const GetSOketChatHistory = (selectedUser, _id, callback) => {
 
   socket.emit('receive_message', roomId);
 
-  socket.on('receive_message', );
+  socket.on('receive_message');
 
   socket.on('chat_history', (data) => {
     if (callback) {
