@@ -14,6 +14,18 @@ const ProfileHeader = () => {
     localStorage.getItem('info')
   );
 
+  useEffect(() => {
+    if (token === null) {
+      toast.error('Your Session Expired. Please Login Again.');
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('info');
+      navigate('/login', { replace: true });
+    }
+  }, [token]);
+
+  console.log('token', token);
+
   const abcd = () => {
     let alertShown = false;
 
@@ -60,9 +72,9 @@ const ProfileHeader = () => {
             className="w-[20%] h-12 md:h-10 lg:h-12 rounded-full  text-white ms-2"
             style={{
               backgroundImage: `./images/default_profile.png`,
-              backgroundSize: 'cover', 
-              backgroundPosition: 'center', 
-              backgroundRepeat: 'no-repeat', 
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
             }}
           >
             <img

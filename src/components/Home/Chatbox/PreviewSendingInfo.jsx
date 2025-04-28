@@ -6,6 +6,7 @@ import { base_url } from '../../../utils/api_config';
 import { convertTimestamp } from '../../../utils/date.config';
 import { VisiblityPreviewImage } from '../../../Redux/features/user/userSlice';
 import socket from '../../../utils/Socket';
+import { addMessage } from '../../../Redux/features/message/messageSlice';
 
 const PreviewSendingInfo = () => {
   const dispatch = useDispatch();
@@ -72,9 +73,24 @@ const PreviewSendingInfo = () => {
     });
 
     setinputMessage('');
-    dispatch(VisiblityPreviewImage(false));
+
+    socket.emit('message_receive', room_ID);
+
+    const handleMessage = (data) => {
+      dispatch(addMessage(data));
+    };
+
+    socket.on('latest_message', handleMessage);
+
+    socket.on('update_user_list_entry', (data) => {
+      // console.log('update_user_list_entry', data);
+    });
 
     socket.emit('get_messages', room_ID);
+
+    dispatch(VisiblityPreviewImage(false));
+
+    // socket.emit('get_messages', room_ID);
   };
 
   // useEffect(() => {

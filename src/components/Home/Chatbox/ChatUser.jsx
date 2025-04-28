@@ -371,7 +371,7 @@ const ChatUser = ({ abcd }) => {
                     type="file"
                     accept="image"
                     onChange={() => handleImageUpload()}
-                    // ref={fileInputRef}
+                    ref={fileInputRef}
                     className="hidden"
                   />
                   {image && (

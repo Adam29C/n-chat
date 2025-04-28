@@ -1,286 +1,168 @@
-// import { useState, useRef } from "react";
-// import { FaMicrophone, FaStop } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from 'react';
+import AgoraRTC from 'agora-rtc-sdk-ng';
 
-// export default function AudioRecorder() {
-//   const [isRecording, setIsRecording] = useState(false);
-//   const [audioURL, setAudioURL] = useState(null);
-//   const mediaRecorderRef = useRef(null);
-//   const audioChunks = useRef([]);
+const AudioCall = () => {
+  const [joined, setJoined] = useState(false);
+  const [remoteUsers, setRemoteUsers] = useState([]);
+  const [callDuration, setCallDuration] = useState(0);
+  const [callStartTime, setCallStartTime] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
 
-//   const startRecording = async () => {
-//     try {
-//       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//       mediaRecorderRef.current = new MediaRecorder(stream);
+  const localAudioTrackRef = useRef(null);
+  const clientRef = useRef(null);
 
-//       mediaRecorderRef.current.ondataavailable = (event) => {
-//         audioChunks.current.push(event.data);
-//       };
+  const appId = '740baf604340463486afea8a267cc8e8'; // Replace with your Agora App ID
+  const channel = 'audio-channel'; // Replace with your desired channel name
+  const token = null; // Replace with your token if needed
 
-//       mediaRecorderRef.current.onstop = () => {
-//         const audioBlob = new Blob(audioChunks.current, { type: "audio/wav" });
-//         const url = URL.createObjectURL(audioBlob);
-//         setAudioURL(url);
-//         audioChunks.current = [];
-//       };
+  const handleJoinCall = async () => {
+    if (joined) {
+      console.log('Already joined the call.');
+      return;
+    }
 
-//       mediaRecorderRef.current.start();
-//       setIsRecording(true);
-//     } catch (error) {
-//       console.error("Microphone access error:", error);
-//     }
-//   };
+    try {
+      clientRef.current = AgoraRTC.createClient({ mode: 'rtc', codec: 'h264' });
 
-//   const stopRecording = () => {
-//     mediaRecorderRef.current.stop();
-//     setIsRecording(false);
-//   };
+      clientRef.current.on('user-published', handleUserPublished);
+      clientRef.current.on('user-left', handleUserLeft);
+      clientRef.current.on('network-quality', handleNetworkQuality);
 
-//   return (
-//     <div className="flex justify-center items-center h-screen bg-gray-100 p-4">
-//       <div className="w-[500px] p-4 bg-gray-200 rounded-lg shadow-lg flex flex-col">
-//         <div className="flex justify-between items-center bg-gray-400 p-3 rounded-lg">
-//           <div className="flex flex-col">
-//             <span className="text-green-900 font-semibold text-sm">Audio Recorder</span>
-//             <span className="text-black text-base">
-//               {isRecording ? "Recording..." : "Click to record audio"}
-//             </span>
-//           </div>
-//           <button
-//             className="text-gray-600 hover:text-black"
-//             onClick={() => setAudioURL(null)}
-//           >
-//             ✖
-//           </button>
-//         </div>
-//         <div className="flex justify-center items-center p-4">
-//           {!isRecording ? (
-//             <button
-//               onClick={startRecording}
-//               className="bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600"
-//             >
-//               <FaMicrophone size={24} />
-//             </button>
-//           ) : (
-//             <button
-//               onClick={stopRecording}
-//               className="bg-red-500 text-white p-4 rounded-full shadow-lg hover:bg-red-600"
-//             >
-//               <FaStop size={24} />
-//             </button>
-//           )}
-//         </div>
-//         {audioURL && (
-//           <audio controls className="w-full mt-2">
-//             <source src={audioURL} type="audio/wav" />
-//             Your browser does not support the audio element.
-//           </audio>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
+      await clientRef.current.join(appId, channel, token, null);
 
-// import { useState } from "react";
-// import { motion } from "framer-motion";
-// // import { Button } from "@/components/ui/button";
-// import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6 } from "lucide-react";
+      const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+      localAudioTrackRef.current = localAudioTrack;
 
-// const diceFaces = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
+      await clientRef.current.publish([localAudioTrack]);
 
-// export default function LudoGame() {
-//   const [diceValue, setDiceValue] = useState(1);
-//   const [rolling, setRolling] = useState(false);
+      setJoined(true);
+      setCallStartTime(new Date());
+    } catch (error) {
+      console.error('Error joining the channel:', error);
+    }
+  };
 
-//   const rollDice = () => {
-//     setRolling(true);
-//     setTimeout(() => {
-//       const newValue = Math.floor(Math.random() * 6) + 1;
-//       setDiceValue(newValue);
-//       setRolling(false);
-//     }, 1000);
-//   };
+  const handleUserPublished = async (user, mediaType) => {
+    if (mediaType === 'audio') {
+      await clientRef.current.subscribe(user, 'audio');
+      user.audioTrack.play();
 
-//   const DiceIcon = diceFaces[diceValue - 1];
+      setRemoteUsers((prevUsers) => {
+        const exists = prevUsers.some((u) => u.uid === user.uid);
+        return exists ? prevUsers : [...prevUsers, user];
+      });
+    }
+  };
 
-//   return (
-//     <div className="flex flex-col items-center justify-center h-screen bg-green-200">
-//       <h1 className="text-4xl font-bold mb-4">Ludo Game 🎲</h1>
-//       <motion.div animate={{ rotate: rolling ? 360 : 0 }} transition={{ duration: 1 }}>
-//         <DiceIcon className="w-20 h-20 text-black" />
-//       </motion.div>
-//       <button onClick={rollDice} disabled={rolling} className="mt-4 px-6 py-3 text-lg bg-blue-500 hover:bg-blue-600 text-white">
-//         {rolling ? "Rolling..." : "Roll Dice"}
-//       </button>
-//     </div>
-//   );
-// }
+  const handleUserLeft = (user) => {
+    setRemoteUsers((prevUsers) => prevUsers.filter((u) => u.uid !== user.uid));
+  };
 
-// import React, { useState, useEffect, useRef } from 'react';
-// import axios from 'axios';
+  const handleNetworkQuality = (stats) => {
+    console.log('Network Quality:', stats);
+  };
 
-// const InfiniteScroll = () => {
-//   const [data, setData] = useState([]); // API data store karega
-//   const [page, setPage] = useState(1); // Current page track karega
-//   const [loading, setLoading] = useState(false);
-//   const [hasMore, setHasMore] = useState(true);
+  const handleMuteUnmute = async () => {
+    if (localAudioTrackRef.current) {
+      if (isMuted) {
+        await localAudioTrackRef.current.setEnabled(true); // Unmute
+      } else {
+        await localAudioTrackRef.current.setEnabled(false); // Mute
+      }
+      setIsMuted(!isMuted);
+    }
+  };
 
-//   const observerRef = useRef(null);
+  const handleLeaveCall = async () => {
+    if (localAudioTrackRef.current) {
+      localAudioTrackRef.current.stop();
+      localAudioTrackRef.current.close();
+    }
 
-//   // 📌 API se data fetch karna
-//   const fetchData = async () => {
-//     if (!hasMore || loading) return;
-//     setLoading(true);
+    if (clientRef.current) {
+      await clientRef.current.leave();
+    }
 
-//     // `https://api.example.com/posts?page=${page}`
-//     try {
-//       const response = await axios.get(
-//         `http://3.250.174.141:7806/user/all?page=${page}&limit=20`
-//       );
+    setRemoteUsers([]);
+    setJoined(false);
+    setCallDuration(0);
+    setCallStartTime(null);
+    setIsMuted(false);
+  };
 
-//       const newData = response.data.data.users;
+  useEffect(() => {
+    let timer;
+    if (callStartTime) {
+      timer = setInterval(() => {
+        setCallDuration(Math.floor((new Date() - callStartTime) / 1000));
+      }, 1000);
+    }
 
-//       if (newData.length === 0) {
-//         setHasMore(false);
-//       } else {
-//         setData((prev) => [...prev, ...newData]);
-//         setPage((prev) => prev + 1);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching data', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+    return () => clearInterval(timer);
+  }, [callStartTime]);
 
-//   useEffect(() => {
-//     if (loading) return;
+  useEffect(() => {
+    return () => {
+      if (clientRef.current) {
+        clientRef.current.off('user-published', handleUserPublished);
+        clientRef.current.off('user-left', handleUserLeft);
+        clientRef.current.off('network-quality', handleNetworkQuality);
+      }
+    };
+  }, []);
 
-//     const observer = new IntersectionObserver(
-//       (entries) => {
-//         if (entries[0].isIntersecting && hasMore) {
-//           fetchData();
-//         }
-//       },
-//       { threshold: 1.0 }
-//     );
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
 
-//     if (observerRef.current) observer.observe(observerRef.current);
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then((stream) => {
+      console.log('Microphone access granted.', stream);
+      // Do something with the stream
+    })
+    .catch((error) => {
+      console.error('Microphone access denied:', error);
+    });
 
-//     return () => {
-//       if (observerRef.current) observer.unobserve(observerRef.current);
-//     };
-//   }, [loading, hasMore]);
+  return (
+    <div className='bg-gray-100 p-4 rounded-lg shadow-lg w-[500px] mx-auto mt-10'>
+      <h1>Agora Audio Call</h1>
 
-//   console.log('observerRef', observerRef);
+      <div>
+        {joined ? (
+          <p>You're in the call!</p>
+        ) : (
+          <button onClick={handleJoinCall}>Join Call</button>
+        )}
+      </div>
 
-//   return (
-//     <div className="container">
-//       <h2>Infinite Scroll with Pagination</h2>
-//       <ul>
-//         {data.map((item, index) => (
-//           <li key={index}>{item.userName}</li> // API ka data show karega
-//         ))}
-//       </ul>
+      <div>
+        <h3>Remote Users</h3>
+        {remoteUsers.length > 0 ? (
+          remoteUsers.map((user) => (
+            <div key={user.uid}>
+              <p>Remote user {user.uid}</p>
+            </div>
+          ))
+        ) : (
+          <p>No remote users yet.</p>
+        )}
+      </div>
 
-//       {/* {loading && <p>Loading...</p>} */}
-//       {!hasMore && <p>No more data</p>}
+      {joined && (
+        <div>
+          <p>Call Duration: {formatDuration(callDuration)}</p>
+          <button onClick={handleMuteUnmute}>
+            {isMuted ? 'Unmute' : 'Mute'}
+          </button>
+          <button onClick={handleLeaveCall}>End Call</button>
+        </div>
+      )}
+    </div>
+  );
+};
 
-//       {/* 👇 Intersection Observer ke liye reference */}
-//       <div
-//         ref={observerRef}
-//         style={{ height: '20px', background: 'transparent' }}
-//       ></div>
-//     </div>
-//   );
-// };
-
-// export default InfiniteScroll;
-
-// import React, { useEffect, useState } from 'react';
-// import { useSelector } from 'react-redux';
-// import io from 'socket.io-client';
-
-// const socket = io('http://3.250.174.141:7806/'); // Replace with your server URL
-
-// const Chat = ({ userId, userName, roomId, receiverId }) => {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-
-//   const { _id, email, mobile, name, role } = JSON.parse(
-//     localStorage.getItem('info')
-//   );
-//   const details = useSelector((state) => state.user.details);
-
-//   const selectedUser = useSelector((state) => state.user.selectedUser);
-
-//   // Join room on mount
-//   let room_ID = '61fbd0cd41b0d43022cabf27-67974c7eb81801947f2d26ef';
-//   useEffect(() => {
-//     // socket.emit('join_room', room_ID);
-
-//     socket.on('receive_message', (data) => {
-//       console.log('Message received: ', data);
-//       setMessages((prev) => [...prev, data]);
-//     });
-
-//     socket.on('new_message_notification', (notif) => {
-//       console.log('🔔 Notification:', notif);
-//     });
-
-//     return () => {
-//       socket.off('receive_message');
-//       socket.off('new_message_notification');
-//     };
-//   }, [room_ID]);
-
-//   const sendMessage = () => {
-//     if (!message.trim()) return;
-
-//     const messageData = {
-//       sender: userId,
-//       receiver: receiverId,
-//       message: message,
-//       room: '61fbd0cd41b0d43022cabf27-67974c7eb81801947f2d26ef',
-//       dateTime: new Date().toLocaleString(),
-//       dateTimestamp: Date.now(),
-//     };
-
-//     socket.emit('send_message', messageData);
-//     setMessage('');
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-bold mb-4">Chat Room: {room_ID}</h2>
-//       <div className="h-64 overflow-y-auto border p-2 mb-4 bg-white rounded shadow">
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`mb-2 p-2 rounded ${msg.sender._id === userId ? 'bg-green-100 text-right' : 'bg-gray-100 text-left'}`}
-//           >
-//             <div className="text-sm font-semibold">{msg.sender.userName}</div>
-//             <div>{msg.message}</div>
-//             <div className="text-xs text-gray-500">{msg.dateTime}</div>
-//           </div>
-//         ))}
-//       </div>
-//       <div className="flex gap-2">
-//         <input
-//           type="text"
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="border rounded w-full p-2"
-//           placeholder="Type your message..."
-//         />
-//         <button
-//           onClick={sendMessage}
-//           className="bg-blue-500 text-white px-4 py-2 rounded"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Chat;
+export default AudioCall;

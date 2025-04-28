@@ -70,7 +70,7 @@ const SingleUser = ({ data, title, abc }) => {
 
     socket.on('user_counter_reset', (updatedUser) => {
       const updatedList = otherUsers.map((user) =>
-        user._id === updatedUser._id ? updatedUser : user
+        user._id === updatedUser?._id ? updatedUser : user
       );
 
       dispatch(setOtherUsers(updatedList));
@@ -78,7 +78,7 @@ const SingleUser = ({ data, title, abc }) => {
 
     socket.on('messages_read', (updatedUser) => {
       const updatedList = otherUsers.map((user) =>
-        user._id === updatedUser._id ? updatedUser : user
+        user._id === updatedUser?._id ? updatedUser : user
       );
       dispatch(setOtherUsers(updatedList));
     });

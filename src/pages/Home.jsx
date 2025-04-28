@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { GetUserData } from '../utils/userApiCall';
 import { setAuthUser } from '../Redux/features/user/userSlice';
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   // const userApiCall = async () => {
   //   setLoading(true);
   //   const res = await GetUserData();
@@ -24,6 +26,24 @@ const Home = () => {
   // useEffect(() => {
   //   userApiCall();
   // }, []);
+
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    if (token === null) {
+      toast.error('Your Session Expired. Please Login Again.');
+      localStorage.removeItem('token');
+      localStorage.removeItem('info');
+      navigate('/login', { replace: true });
+    }
+  }, [token]);
+
+  console.log('token', token);
+
+  // const { _id, email, mobile, name, role } = JSON.parse(
+  //   localStorage.getItem('info')
+  // );
+
   return (
     <>
       {/* <div className=' p-5'> */}
