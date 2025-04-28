@@ -30,7 +30,7 @@ const Home = () => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (token === null) {
+    if (!token) {
       toast.error('Your Session Expired. Please Login Again.');
       localStorage.removeItem('token');
       localStorage.removeItem('info');

@@ -15,8 +15,10 @@ const ProfileHeader = () => {
   );
 
   useEffect(() => {
-    if (token === null) {
+
+    if (!token) {
       toast.error('Your Session Expired. Please Login Again.');
+      console.log('token', token);
 
       localStorage.removeItem('token');
       localStorage.removeItem('info');
@@ -24,7 +26,6 @@ const ProfileHeader = () => {
     }
   }, [token]);
 
-  console.log('token', token);
 
   const abcd = () => {
     let alertShown = false;

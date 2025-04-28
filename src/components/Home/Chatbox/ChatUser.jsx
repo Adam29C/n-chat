@@ -9,6 +9,7 @@ import { RiMoonClearLine, RiSettings2Line } from 'react-icons/ri';
 import { IoLocationOutline, IoVideocamOutline } from 'react-icons/io5';
 import { AiOutlineAudio } from 'react-icons/ai';
 import { useFormik } from 'formik';
+import { TbPhoneCalling } from 'react-icons/tb';
 
 import ReusableForm from '../../HelpersComponents/Form';
 import DialogBox from '../../HelpersComponents/DialogBox';
@@ -26,10 +27,10 @@ import {
   Get_Year_With_Time,
   Get_Year_With_Time_With_Column_Saprate,
 } from '../../../helpers/helpers';
-
+import { useNavigate } from 'react-router-dom';
 const ChatUser = ({ abcd }) => {
   // console.log('abcd', abcd);
-
+  const navigate = useNavigate();
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
@@ -56,9 +57,7 @@ const ChatUser = ({ abcd }) => {
 
   let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
-
   // console.log('cjaj users =' ,noReadedId);
-  
 
   const { socket, onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(selectedUser._id);
@@ -292,6 +291,12 @@ const ChatUser = ({ abcd }) => {
 
   // console.log('showTesting', showTesting);
 
+  // const CallUsers = () => {
+  //   // navigate('https://chatit.minidog.club/main');
+
+  //   window.location.href = 'https://chatit.minidog.club/main?';
+  // };
+
   return (
     <>
       <div
@@ -331,6 +336,9 @@ const ChatUser = ({ abcd }) => {
 
         <div className="relative">
           <div className="flex items-center">
+            {/* <div onClick={() => CallUsers()} className="p-1">
+              <TbPhoneCalling className="text-2xl" />
+            </div> */}
             {/* <button
               ref={btnRef}
               onClick={() => handleLogOutBtn()}
