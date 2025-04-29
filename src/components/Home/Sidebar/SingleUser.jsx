@@ -26,9 +26,8 @@ import { GET_SELECTED_USERS_MASSAGES_API } from '../../../services/messages.serv
 import { formatWhatsAppDate } from '../../../helpers/helpers';
 import socket from '../../../utils/Socket';
 const SingleUser = ({ data, title, abc }) => {
-  const { _id, email, mobile, name, role } = JSON.parse(
-    localStorage.getItem('info')
-  );
+  const info = JSON.parse(localStorage.getItem('info') || '{}');
+  const { _id, email, mobile, name, role } = info;
 
   // const [message, setMessage] = useState([]);
   const [Create_roomId, setCreate_roomId] = useState('');

@@ -10,13 +10,13 @@ import { useNavigate } from 'react-router-dom';
 const ProfileHeader = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const { _id, email, mobile, name, role } = JSON.parse(
-    localStorage.getItem('info')
-  );
+  // const { name } = JSON.parse(localStorage.getItem('info')) || [];
+  const info = JSON.parse(localStorage.getItem('info') || '{}');
+  const { name } = info;
 
   useEffect(() => {
-
-    if (!token) {
+    console.log('info', token);
+    if (token === 'undefined' || token === 'null') {
       toast.error('Your Session Expired. Please Login Again.');
       console.log('token', token);
 
@@ -25,7 +25,6 @@ const ProfileHeader = () => {
       navigate('/login', { replace: true });
     }
   }, [token]);
-
 
   const abcd = () => {
     let alertShown = false;

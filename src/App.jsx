@@ -22,31 +22,20 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const login = localStorage.getItem('chatit');
-  //   const isDark = JSON.parse(localStorage.getItem('chatit_darkmode'));
-  //   // console.log('out', Boolean(isDark));
-  //   if (Boolean(isDark)) {
-  //     // console.log('true', Boolean(isDark));
-  //     dispatch(setTheme(Boolean(isDark)));
-  //   } else {
-  //     // console.log('false', Boolean(isDark));
-  //     dispatch(setTheme(Boolean(isDark)));
-  //   }
+  useEffect(() => {
+    const login = localStorage.getItem('token');
 
-  // //   if (login) {
-  // //     navigate('/');
-  // //     setAuth(login);
-  // //   } else {
-  // //     navigate('/login');
-  // //     setAuth(null);
-  // //   }
-  // }, [authUser]);
+    if (login) {
+      navigate('/');
+    } else {
+      navigate('/login');
+    }
+  }, [authUser]);
 
   return (
     <>
       <Routes>
-        <Route element={<ProtectRoute user={!auth} redirect="/" />}>
+        <Route element={<ProtectRoute user={!auth} redirect="/login" />}>
           <Route path="/" element={<Home />} />
           <Route path="/change_password" element={<ChangePassword />} />
           <Route path="/delete_account" element={<DeleteAccount />} />

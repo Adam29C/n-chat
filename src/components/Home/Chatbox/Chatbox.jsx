@@ -16,10 +16,9 @@ import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 const Chatbox = () => {
   // const socket = socketIOClient(base_url);
   const dispatch = useDispatch();
+  const info = JSON.parse(localStorage.getItem('info') || '{}');
 
-  const { _id, email, mobile, name, role } = JSON.parse(
-    localStorage.getItem('info')
-  );
+  const { _id, email, mobile, name, role } = info;
 
   const showSelectedUserBtn = useSelector(
     (state) => state.showSelectedBtn.value

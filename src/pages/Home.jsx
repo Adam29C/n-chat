@@ -30,15 +30,16 @@ const Home = () => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!token) {
+    console.log('info', token);
+    if (token === 'undefined' || token === 'null') {
       toast.error('Your Session Expired. Please Login Again.');
+      console.log('token', token);
+      navigate('/login', { replace: true });
+
       localStorage.removeItem('token');
       localStorage.removeItem('info');
-      navigate('/login', { replace: true });
     }
   }, [token]);
-
-  console.log('token', token);
 
   // const { _id, email, mobile, name, role } = JSON.parse(
   //   localStorage.getItem('info')
