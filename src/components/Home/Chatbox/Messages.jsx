@@ -38,14 +38,15 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox  }) => {
   const dispatch = useDispatch();
 
   const adada = async () => {
+       let receiverId = selectedUser.userId;
+
+    socket.emit('join_room', `${_id}-${receiverId}`);
     await GetSOketChatHistory(selectedUser, _id, (response) => {
       // dispatch(setMessage(response));
       // dispatch(setMessage([...messages, response]));
     });
 
-    // let receiverId = selectedUser.userId;
-
-    // socket.emit('join_room', `${_id}-${receiverId}`);
+ 
 
     // console.log('`${_id}-${receiverId}`', `${_id}-${receiverId}`);
 
