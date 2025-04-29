@@ -38,7 +38,7 @@ const SingleUser = ({ data, title, abc }) => {
   const [testing, settesting] = useState([]);
   const messages = useSelector((state) => state.message.messages);
 
-  let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
+  // let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
   // console.log('noReadedId', messages);
 
@@ -48,14 +48,14 @@ const SingleUser = ({ data, title, abc }) => {
 
   const handleSelectedUser = async (test) => {
     const receiverId = data?.userId;
+    socket.emit('join_room', `${_id}-${receiverId}`);
+
     setCreate_roomId(`${_id}-${receiverId}`);
     // const socket = socketIOClient(base_url);
 
     let roomId = `${_id}-${receiverId}`;
 
     let ress = socket.emit('user_connected', _id);
-
-    socket.emit('join_room', `${_id}-${receiverId}`);
 
     socket.emit('get_messages', `${_id}-${receiverId}`);
 

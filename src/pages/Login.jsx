@@ -39,9 +39,7 @@ const Login = () => {
         const res = await LOGIN_URI_API(values);
 
 
-        console.log('====================================');
-        console.log("res" ,res);
-        console.log('====================================');
+
         setLoading(false);
         if (res.status === 0) {
           toast.error(res.message, {
@@ -161,17 +159,10 @@ const Login = () => {
                   {errors.password && touched.password ? errors.password : null}
                 </span>
               </div>
-              <span className="flex justify-end">
-                <NavLink
-                  className={`text-right text-gray-500 text-sm underline `}
-                  to="/forgot_password"
-                >
-                  Forgot password?
-                </NavLink>
-              </span>
+            
               {loading ? (
                 <button
-                  className="flex justify-center items-center gap-x-2 bg-blue-500 text-white py-1 rounded font-semibold  mt-3"
+                  className="flex justify-center items-center gap-x-2 login-color text-white py-1 rounded font-semibold  mt-3"
                   type="button"
                   disabled="disabled"
                 >
@@ -180,7 +171,7 @@ const Login = () => {
                 </button>
               ) : (
                 <button
-                  className="bg-blue-500 text-white py-1 rounded font-bold hover:bg-blue-700 mt-3"
+                  className=" login-color text-white py-1 rounded font-bold  mt-3"
                   type="submit"
                 >
                   Log in
@@ -188,12 +179,7 @@ const Login = () => {
               )}
             </form>
 
-            <span className="text-gray-400 py-2 text-sm">
-              Doesn't have an account yet?{' '}
-              <NavLink to="/signup" className={`text-blue-600`}>
-                Sign up
-              </NavLink>
-            </span>
+          
           </div>
 
           {/* ================== Side picture ====================== */}

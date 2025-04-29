@@ -457,7 +457,7 @@ const InfiniteScrollBox = () => {
 
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  console.log('data', data);
+  console.log('otherUsers', otherUsers);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -465,9 +465,11 @@ const InfiniteScrollBox = () => {
 
   useEffect(() => {
     socket.on('update_user_list_entry', (updatedUser) => {
-      const updatedList = otherUsers.map((user) =>
-        user._id === updatedUser._id ? updatedUser : user
-      );
+      console.log('updatedUser', updatedUser);
+
+      const updatedList = otherUsers
+        .map((user) => (user?._id === updatedUser?._id ? updatedUser : user))
+        .sort((a, b) => new Date(b.updatedTime) - new Date(a.updatedTime));
       dispatch(setOtherUsers(updatedList));
     });
 
@@ -486,7 +488,6 @@ const InfiniteScrollBox = () => {
     });
 
     socket.on('user_list', (payload) => {
-      // console.log('payload', payload);
       dispatch(setOtherUsers([...otherUsers, ...payload.users]));
     });
     setLoading(false);
@@ -512,16 +513,16 @@ const InfiniteScrollBox = () => {
     // <div
     //   className={` bg-slate-100 hide_scrollbar px-3 max-h-[83vh] md:max-h-[86vh] lg:max-h-[85vh] `}
     // >
-      <div
-        ref={boxRef}
-        onScroll={handleScroll}
-        className="h-[87vh] overflow-auto border"
-      >
-        {otherUsers?.map((item, index) => (
-          <SingleUser data={item} key={item._id || index} />
-        ))}
-        {loading && <div className="p-4 text-center">Loading more…</div>}
-      </div>
+    <div
+      ref={boxRef}
+      onScroll={handleScroll}
+      className="h-[87vh] overflow-auto border"
+    >
+      {otherUsers?.map((item, index) => (
+        <SingleUser data={item} key={item._id || index} />
+      ))}
+      {loading && <div className="p-4 text-center">Loading more…</div>}
+    </div>
     // </div>
   );
 };
