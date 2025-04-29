@@ -194,7 +194,7 @@
 
 // export default Search;
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoCloseSharp } from 'react-icons/io5';
@@ -208,20 +208,23 @@ const Search = ({ title }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+
   const [filteredUsers, setFilteredUsers] = useState([]);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  console.log('otherUsers', otherUsers);
+  // console.log('otherUsers', otherUsers);
 
-  const getAllUser12 = async () => {
-    // const res = await GET_ALL_USERS_URI_API();
-    // setData(res?.data.users);
-  };
+  // const getAllUser12 = async () => {
+  //   // const res = await GET_ALL_USERS_URI_API();
+  //   // setData(res?.data.users);
+  // };
 
-  useEffect(() => {
-    getAllUser12();
-  }, []);
+  // useEffect(() => {
+  //   getAllUser12();
+  // }, []);
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value);
@@ -231,60 +234,91 @@ const Search = ({ title }) => {
     // dispatch(setOtherUsers(data));
   };
 
-  const throttle = (func, limit) => {
-    let lastFunc;
-    let lastRan;
+  // const throttle = (func, limit) => {
+  //   let lastFunc;
+  //   let lastRan;
 
-    return function (...args) {
-      if (!lastRan) {
-        func.apply(this, args);
-        lastRan = Date.now();
-      } else {
-        clearTimeout(lastFunc);
-        lastFunc = setTimeout(
-          () => {
-            if (Date.now() - lastRan >= limit) {
-              func.apply(this, args);
-              lastRan = Date.now();
-            }
-          },
-          limit - (Date.now() - lastRan)
-        );
-      }
-    };
+  //   return function (...args) {
+  //     if (!lastRan) {
+  //       func.apply(this, args);
+  //       lastRan = Date.now();
+  //     } else {
+  //       clearTimeout(lastFunc);
+  //       lastFunc = setTimeout(
+  //         () => {
+  //           if (Date.now() - lastRan >= limit) {
+  //             func.apply(this, args);
+  //             lastRan = Date.now();
+  //           }
+  //         },
+  //         limit - (Date.now() - lastRan)
+  //       );
+  //     }
+  //   };
+  // };
+
+  // const getAllUser = async () => {
+  //   console.log('socket', search);
+
+  //   socket.emit('get_user_list', { page: '', limit: '', search: search });
+
+  //   const handleUserList = (data) => {
+  //     const newData = data.users || [];
+
+  //     console.log('newData', newData);
+
+  //     if (newData.length > 0) {
+  //       dispatch(setOtherUsers(newData));
+  //     } else {
+  //       dispatch(setOtherUsers(otherUsers));
+  //     }
+
+  //     socket.off('user_list', handleUserList);
+  //   };
+
+  //   socket.on('user_list', handleUserList);
+  // };
+
+  // useEffect(() => {
+  //   // if (search != '') {
+  //   getAllUser();
+  //   // }
+  // }, [search]);
+
+  const fetchData = async (pageNum) => {
+    setLoading(true);
+
+    socket.emit('get_user_list', {
+      page: pageNum,
+      limit: 10,
+      search: search,
+    });
+
+    socket.on('user_list', (payload) => {
+      dispatch(setOtherUsers([...payload.users]));
+    });
+    setLoading(false);
   };
 
-  const getAllUser = async () => {
-    console.log('socket', search);
-
-    socket.emit('get_user_list', { page: '', limit: '', search: search });
-
-    const handleUserList = (data) => {
-      const newData = data.users || [];
-
-      console.log('newData', newData);
-
-      if (newData.length > 0) {
-        dispatch(setOtherUsers(newData));
-      } else {
-        dispatch(setOtherUsers(otherUsers));
+  const handleScroll = useCallback(
+    (e) => {
+      const { scrollTop, clientHeight, scrollHeight } = e.target;
+      // when scrolled within 20px of the bottom:
+      if (scrollTop + clientHeight >= scrollHeight - 20 && !loading) {
+        setPage((p) => p + 1);
       }
+    },
+    [loading]
+  );
 
-      socket.off('user_list', handleUserList);
-    };
-
-    socket.on('user_list', handleUserList);
-  };
-
+  // fetch on page change
   useEffect(() => {
-    // if (search != '') {
-    getAllUser();
-    // }
-  }, [search]);
+    fetchData(page);
+  }, [page, search]);
 
   return (
     <>
-      <div className="w-full pt-4   bg-slate-100 sh-[6vh] h-fit md:h-[7vh] lg:h-[6vh] flex justify-center shadow-border-radius  border-grey-200 ">
+      <div className="w-full pt-4   bg-slate-100 sh-[6vh] h-fit md:h-[7vh] lg:h-[6vh] flex justify-center shadow-border-radius  border-grey-200 "  onScroll={handleScroll}>
         <label
           className={`w-[95%] border ${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-200 border-gray-300'}  rounded-full px-1 flex items-center font-semibold `}
         >

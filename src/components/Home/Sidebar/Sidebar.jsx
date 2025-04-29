@@ -14,7 +14,7 @@ const Sidebar = () => {
   return (
     <>
       <div
-        className={` test-color   bg-slate-100w-[100%] ${selectAi ? 'hidden' : showSelectedUserBtn ? 'hidden' : 'inline-block'}   md:inline-block md:w-[40%] lg:w-[30%] ${darkMode ? 'shadow-none ' : 'shadow-2xl  shadow-gray-300'} `}
+        className={` test-color   bg-slate-100 w-[100%] ${selectAi ? 'hidden' : showSelectedUserBtn ? 'hidden' : 'inline-block'}   md:inline-block md:w-[40%] lg:w-[30%] ${darkMode ? 'shadow-none ' : 'shadow-2xl  shadow-gray-300'} `}
       >
         <ProfileHeader />
 

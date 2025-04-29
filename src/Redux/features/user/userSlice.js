@@ -21,9 +21,14 @@ export const userSlice = createSlice({
     setAuthUser: (state, action) => {
       state.authUser = action.payload;
     },
+
     setOtherUsers: (state, action) => {
       state.otherUsers = action.payload;
     },
+    setOtherUsers12121: (state, action) => {
+      state.otherUsers.push(...action.payload);
+    },
+
     newUpdatedUsers: (state, action) => {
       state.otherUsers.push(action.payload);
     },
@@ -62,6 +67,7 @@ export const {
   VisiblityPreviewImage,
   newUpdatedUsers,
   ManageShowTesting,
+  setOtherUsers12121,
 } = userSlice.actions;
 
 export default userSlice.reducer;

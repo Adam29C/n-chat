@@ -267,9 +267,9 @@ const ChatUser = ({ abcd }) => {
     );
 
     if (response.status === 'success') {
-      const res = await GET_ALL_USERS_URI_API();
+      // const res = await GET_ALL_USERS_URI_API();
 
-      dispatch(setOtherUsers(res?.data.users));
+      // dispatch(setOtherUsers(res?.data.users));
       setOpenModal(false);
       toast.success(response.message, {
         position: 'top-center',

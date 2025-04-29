@@ -60,14 +60,17 @@ const MessageSend = ({ setfirst }) => {
   const fileInputRef = useRef(null);
   const VideofileInputRef = useRef(null);
 
+
+  console.log("fileInputRef" ,fileInputRef);
+  
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
     // console.log('e.key', e);
 
-    if (e.type === 'submit') {
-      setOpen(false);
-    }
+    // if (e.type === 'submit') {
+    //   setOpen(false);
+    // }
 
     // setfirst(message121);
 
@@ -155,7 +158,7 @@ const MessageSend = ({ setfirst }) => {
 
   return (
     <>
-      {/* <form onSubmit={handleSendMessage}> */}
+      <form onSubmit={handleSendMessage}>
       <div
         className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
         ref={modalRef}
@@ -201,7 +204,7 @@ const MessageSend = ({ setfirst }) => {
             <>
               <div className="relative">
                 <button
-                  // ref={btnRef}
+                  ref={btnRef}
                   className="p-2 me-5"
                   onClick={() => setOpen(!open)}
                 >
@@ -220,7 +223,7 @@ const MessageSend = ({ setfirst }) => {
           )}
         </div>
       </div>
-      {/* </form> */}
+      </form>
       <Pophover
         customClass={' right-[5.25rem]  bottom-[2.25rem]'}
         setOpen={setOpen}

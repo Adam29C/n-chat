@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiSend } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import socketIOClient from 'socket.io-client';
@@ -19,7 +19,7 @@ const PreviewSendingInfo = () => {
   const getDocuments = useSelector((state) => state.user.getDocuments);
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
-  // console.log('getDocuments', getDocuments);
+  console.log('getDocuments', getDocuments);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -83,25 +83,38 @@ const PreviewSendingInfo = () => {
     socket.on('latest_message', handleMessage);
 
     socket.on('update_user_list_entry', (data) => {
-      // console.log('update_user_list_entry', data);
+      console.log('update_user_list_entry', data);
     });
 
     socket.emit('get_messages', room_ID);
 
     dispatch(VisiblityPreviewImage(false));
 
+    //  useEffect(() => {
+    //     socket.on('update_user_list_entry', (updatedUser) => {
+    //       const updatedList = otherUsers.map((user) =>
+    //         user._id === updatedUser._id ? updatedUser : user
+    //       );
+    //       dispatch(setOtherUsers(updatedList));
+    //     });
+
+    //     return () => {
+    //       socket.off('update_user_list_entry');
+    //     };
+    //   }, [otherUsers]);
+
     // socket.emit('get_messages', room_ID);
   };
 
-  // useEffect(() => {
-  //   socket.on('chat_history', (data) => {
-  //     dispatch(setMessage(data));
-  //   });
+  useEffect(() => {
+    socket.on('chat_history', (data) => {
+      dispatch(setMessage(data));
+    });
 
-  //   return () => {
-  //     socket.off('chat_history');
-  //   };
-  // }, [dispatch]);
+    return () => {
+      socket.off('chat_history');
+    };
+  }, [dispatch]);
 
   return (
     <>
