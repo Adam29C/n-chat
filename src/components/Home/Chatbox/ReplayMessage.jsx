@@ -16,9 +16,9 @@ const ReplayMessage = ({ setShowReplayBox, ShowReplayBox }) => {
       <div
         className={` flex justify-center items-center bg-gray-200 ${showReplay ? 'block' : 'hidden'}`}
       >
-        <div className="w-full max-w-[90%] md:max-w-[80%] lg:max-w-[70%] flex justify-between items-center   rounded-full shadow min-w-[250px]">
-          <div className="flex items-center justify-between bg-gray-400 rounded-[1vw]  p-3 w-full">
-            <div className="flex flex-col">
+        <div className=" w-full max-w-[90%] md:max-w-[80%] lg:max-w-[70%] flex justify-between items-center   rounded-2 shadow min-w-[250px]">
+          <div className="flex items-center justify-between bg-gray-400 rounded-[1vw]  py-3 w-full">
+            <div className=" h-20 overflow-y-scroll flex flex-col ">
               <span className="text-green-900 font-semibold text-sm">
                 {details?.username}
               </span>

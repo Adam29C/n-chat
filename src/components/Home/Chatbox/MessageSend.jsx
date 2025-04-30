@@ -21,9 +21,14 @@ import {
   VisiblityPreviewImage,
   VisiblityReplay,
   UploadDocument,
+  VisiblityShortcut,
+  VisiblityFilterdShortcut,
 } from '../../../Redux/features/user/userSlice';
 import Pophover from '../../HelpersComponents/Pophover';
-import { GET_UPLOAD_DOCUMENT_LINK } from '../../../services/common.service';
+import {
+  FOR_POST_REQUEST,
+  GET_UPLOAD_DOCUMENT_LINK,
+} from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import logger from 'redux-logger';
 import socket from '../../../utils/Socket';
@@ -39,16 +44,23 @@ const MessageSend = ({ setfirst }) => {
     localStorage.getItem('info')
   );
   const details = useSelector((state) => state.user.details);
-  // const socket = socketIOClient(base_url);
 
   const [showModal, setShowModal] = useState(false);
-  const [message121, setMessage121] = useState([]);
+  const [message121, setMessage121] = useState('');
   const [loading, setLoading] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentEmoji, setCurrentEmoji] = useState(null);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
+  const showShortcut = useSelector((state) => state.user.showShortcut);
+
   const showReplay = useSelector((state) => state.user.showReplay);
+  const gertfilterdShortcut = useSelector(
+    (state) => state.user.gertfilterdShortcut
+  );
+
+  console.log('message121', typeof gertfilterdShortcut);
+
   const messages = useSelector((state) => state.message.messages);
 
   const menuRef = useRef(null);
@@ -60,38 +72,44 @@ const MessageSend = ({ setfirst }) => {
   const fileInputRef = useRef(null);
   const VideofileInputRef = useRef(null);
 
+  const setSendMessages = async (e) => {
+    const inputValue = e.target.value;
+    setMessage121(inputValue);
 
-  console.log("fileInputRef" ,fileInputRef);
-  
+    if (inputValue.startsWith('/') && inputValue.length > 1) {
+      const response = await FOR_POST_REQUEST(
+        apiRoutes.FETCH_SHORTCUT_MSGS_LIST,
+        { term: inputValue }
+      );
+
+      dispatch(VisiblityFilterdShortcut(response.returnArr));
+      dispatch(VisiblityShortcut(true));
+    } else {
+      // setMessage121(inputValue);
+      dispatch(VisiblityShortcut(false));
+    }
+  };
+
+  const tst = () => {
+    if (gertfilterdShortcut && gertfilterdShortcut.message) {
+      setMessage121(gertfilterdShortcut.message);
+    }
+  };
+  useEffect(() => {
+    tst();
+  }, [gertfilterdShortcut]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    // console.log('e.key', e);
-
-    // if (e.type === 'submit') {
-    //   setOpen(false);
-    // }
-
-    // setfirst(message121);
-
-    // if (message121 === '') {
-    //   toast.error('Please enter a message');
-    //   // console.error('No user selected!');
-    //   return;
-    // }
-
-    // // if (!selectedUser?.userId) {
-    //   console.error('No user selected!');
-    //   return;
-    // }
-
-    if (showReplay) {
-      RepalyMessages(selectedUser, _id, message121, name, details);
-      // setShowReplayBox(false);
+    if (showShortcut) {
+      SendMessages(selectedUser, _id, message121, name);
       setMessage121('');
-
+      dispatch(VisiblityShortcut(false));
+    } else if (showReplay) {
+      RepalyMessages(selectedUser, _id, message121, name, details);
+      setMessage121('');
       dispatch(VisiblityReplay(false));
-
       return;
     } else {
       SendMessages(selectedUser, _id, message121, name);
@@ -159,70 +177,70 @@ const MessageSend = ({ setfirst }) => {
   return (
     <>
       <form onSubmit={handleSendMessage}>
-      <div
-        className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
-        ref={modalRef}
-      >
-        {isPickerVisible && (
-          <div className="absolute bottom-20 md:bottom-32 lg:bottom-20 ">
-            <Picker
-              data={data}
-              previewPosition="none"
-              onEmojiSelect={(e) => {
-                // setCurrentEmoji(e.native);
-                setMessage121(message121 + e.native);
-              }}
-            />
-          </div>
-        )}
         <div
-          className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
+          className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
+          ref={modalRef}
         >
-          <button
-            className={`${darkMode ? 'bg-slate-700 hover:bg-slate-900 text-white' : 'bg-slate-100 hover:bg-slate-300'} rounded-full  p-2 mx-1`}
-            onClick={() => setPickerVisible(!isPickerVisible)}
-            type="button"
-          >
-            <MdOutlineEmojiEmotions className="text-2xl" />
-          </button>
-
-          <div className="w-[90%] ml-0 mr-2 my-2 ">
-            <input
-              type="text"
-              name="message"
-              value={message121}
-              onChange={(e) => setMessage121(e.target.value)}
-              placeholder="Message"
-              className={`outline-none py-1 px-2 rounded w-full bg-transparent`}
-            />
-          </div>
-          {loading ? (
-            <span className="flex items-center justify-center bg-blue-600 text-white rounded-full p-2 mx-1">
-              <span className="loading loading-spinner"></span>
-            </span>
-          ) : (
-            <>
-              <div className="relative">
-                <button
-                  ref={btnRef}
-                  className="p-2 me-5"
-                  onClick={() => setOpen(!open)}
-                >
-                  <FaPlus className="text-2xl" />
-                </button>
-              </div>
-
-              <button
-                className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
-                onClick={handleSendMessage}
-                disabled={message121 === ''}
-              >
-                <IoMdSend className="text-2xl " />
-              </button>
-            </>
+          {isPickerVisible && (
+            <div className="absolute bottom-20 md:bottom-32 lg:bottom-20 ">
+              <Picker
+                data={data}
+                previewPosition="none"
+                onEmojiSelect={(e) => {
+                  // setCurrentEmoji(e.native);
+                  setMessage121(message121 + e.native);
+                }}
+              />
+            </div>
           )}
+          <div
+            className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
+          >
+            <button
+              className={`${darkMode ? 'bg-slate-700 hover:bg-slate-900 text-white' : 'bg-slate-100 hover:bg-slate-300'} rounded-full  p-2 mx-1`}
+              onClick={() => setPickerVisible(!isPickerVisible)}
+              type="button"
+            >
+              <MdOutlineEmojiEmotions className="text-2xl" />
+            </button>
+
+            <div className="w-[90%] ml-0 mr-2 my-2 ">
+              <input
+                type="text"
+                name="message"
+                value={message121}
+                onChange={(e) => setSendMessages(e)}
+                placeholder="Message"
+                className={`outline-none py-1 px-2 rounded w-full bg-transparent`}
+              />
+            </div>
+            {loading ? (
+              <span className="flex items-center justify-center bg-blue-600 text-white rounded-full p-2 mx-1">
+                <span className="loading loading-spinner"></span>
+              </span>
+            ) : (
+              <>
+                <div className="relative">
+                  <button
+                    ref={btnRef}
+                    className="p-2 me-5"
+                    onClick={() => setOpen(!open)}
+                  >
+                    <FaPlus className="text-2xl" />
+                  </button>
+                </div>
+
+                <button
+                  className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
+                  onClick={handleSendMessage}
+                  disabled={message121 === ''}
+                >
+                  <IoMdSend className="text-2xl " />
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
       </form>
       <Pophover
         customClass={' right-[5.25rem]  bottom-[2.25rem]'}

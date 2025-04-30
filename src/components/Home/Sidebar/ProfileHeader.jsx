@@ -15,10 +15,10 @@ const ProfileHeader = () => {
   const { name } = info;
 
   useEffect(() => {
-    console.log('info', token);
+    // console.log('info', token);
     if (token === 'undefined' || token === 'null') {
       toast.error('Your Session Expired. Please Login Again.');
-      console.log('token', token);
+      // console.log('token', token);
 
       localStorage.removeItem('token');
       localStorage.removeItem('info');

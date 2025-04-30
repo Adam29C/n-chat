@@ -12,6 +12,9 @@ const Home = () => {
   const darkMode = useSelector((state) => state.darkTheme.value);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+
+  
   // const userApiCall = async () => {
   //   setLoading(true);
   //   const res = await GetUserData();
@@ -30,7 +33,7 @@ const Home = () => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    console.log('info', token);
+    // console.log('info', token);
     if (token === 'undefined' || token === 'null') {
       toast.error('Your Session Expired. Please Login Again.');
       console.log('token', token);

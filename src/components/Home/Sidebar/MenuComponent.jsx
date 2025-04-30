@@ -189,9 +189,14 @@ const MenuComponent = () => {
         };
 
         response = await FOR_POST_REQUEST(
-          apiRoutes.CREATE_SHORTCUT_MSGS_LIST,
+          apiRoutes.CREATE_BROADCAST_MSGS_LIST,
           payload
         );
+
+
+
+
+        
       } else {
         const payload = {
           messKey: values.messKey,
@@ -380,7 +385,7 @@ const MenuComponent = () => {
     const handleUserList = (data) => {
       const newData = data.users || [];
 
-      console.log('newData', newData);
+      // console.log('newData', newData);
 
       if (newData.length > 0) {
         setuserList(newData);
@@ -483,7 +488,7 @@ const MenuComponent = () => {
       <DialogBox
         // Modal_width={'65rem'}
         Modal_width={'40rem'}
-        modal_id="my_modal_3"
+        modal_id={`my_modal_3"_${CreateStatus}`}
         title={
           CreateStatus === 7
             ? 'All Users'

@@ -43,6 +43,9 @@ const ChatUser = ({ abcd }) => {
 
   const [open, setOpen] = useState(false);
   const [GetUpiList, setGetUpiList] = useState([]);
+
+  console.log("GetUpiList" ,GetUpiList);
+  
   const [GetBankList, setGetBankList] = useState([]);
   const [OpenModal, setOpenModal] = useState(false);
 
@@ -113,7 +116,10 @@ const ChatUser = ({ abcd }) => {
 
   const getUpiList = async () => {
     const res = await FOR_GET_LIST(apiRoutes.GET_UPI_LIST);
-    setGetUpiList(res.data);
+
+    console.log("res" ,res);
+    
+
 
     const res1 = await FOR_GET_LIST(apiRoutes.GET_BANK_LIST);
     setGetBankList(res1.data);
@@ -198,11 +204,11 @@ const ChatUser = ({ abcd }) => {
       options: [
         {
           label: 'Credit(Deposit)',
-          value: 'deposit',
+          value: '1',
         },
         {
           label: 'Debit(Withdrwal)',
-          value: 'withdrwal',
+          value: '2',
         },
       ],
     },
@@ -212,6 +218,7 @@ const ChatUser = ({ abcd }) => {
       type: 'text',
       label_size: 12,
       col_size: 12,
+      display: true,
     },
     {
       name: 'paymenttype',
@@ -250,6 +257,8 @@ const ChatUser = ({ abcd }) => {
       type: 'text',
       label_size: 12,
       col_size: 12,
+      display: true,
+
     },
   ];
 
@@ -322,8 +331,12 @@ const ChatUser = ({ abcd }) => {
               </div>
             </div>
             <div>
-              <h1 className="text- add-point-btn">{selectedUser.userName}</h1>
+              <h1 className="text- add-point-btn1">{selectedUser.userName}</h1>
+              <span className="text- font-sizes m-0">
+                {selectedUser.mobile}
+              </span>
 
+              <br />
               <span
                 className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} font-sizes`}
               >
@@ -339,13 +352,13 @@ const ChatUser = ({ abcd }) => {
             {/* <div onClick={() => CallUsers()} className="p-1">
               <TbPhoneCalling className="text-2xl" />
             </div> */}
-            {/* <button
+            <button
               ref={btnRef}
               onClick={() => handleLogOutBtn()}
-              className=" bg-blue-600 hover:bg-blue-800 rounded text-white p-1  add-point-btn"
+              className="send-button-color rounded text-white p-1  add-point-btn"
             >
               Add Point
-            </button> */}
+            </button>
             <button ref={btnRef} className="p-1 ms-2" onClick={menuBtn}>
               <RxDragHandleDots2 className="text-2xl" />
             </button>
@@ -424,22 +437,22 @@ const ChatUser = ({ abcd }) => {
             </div>
           )}
         </div>
-        {/* 
-      <DialogBox
-        title={'Update Wallet Balances'}
-        modal_id={'modal-2'}
-        OpenModal={OpenModal}
-        setOpenModal={setOpenModal}
-        body={
-          <ReusableForm
-            fieldtype={fields.filter((field) => !field.showWhen)}
-            formik={formik}
-            btn_name={'Login'}
-            button_Size={'w-100'}
-            show_submit={true}
-          />
-        }
-      /> */}
+
+        <DialogBox
+          title={'Update Wallet Balances'}
+          modal_id={'modal-2'}
+          OpenModal={OpenModal}
+          setOpenModal={setOpenModal}
+          body={
+            <ReusableForm
+              fieldtype={fields.filter((field) => !field.showWhen)}
+              formik={formik}
+              btn_name={'Login'}
+              button_Size={'w-100'}
+              show_submit={true}
+            />
+          }
+        />
       </div>
     </>
   );

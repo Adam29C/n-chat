@@ -457,8 +457,6 @@ const InfiniteScrollBox = () => {
 
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  console.log('otherUsers', otherUsers);
-
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const boxRef = useRef(null);

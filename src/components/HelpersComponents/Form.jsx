@@ -235,6 +235,7 @@ const ReusableForm = ({
               )}
 
               {field.type === 'text' && (
+                // <div className={` ${field.display ? '' : 'hidden'}`}>
                 <div className={` ${field.display ? '' : 'hidden'}`}>
                   <label
                     className="  text-sm font-medium text-gray-700"

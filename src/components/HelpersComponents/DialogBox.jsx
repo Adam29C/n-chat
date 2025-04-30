@@ -10,24 +10,24 @@ const DialogBox = ({
 }) => {
   const modalRef = useRef(null);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (e) => {
-  //     if (modalRef.current && e.target === modalRef.current) {
-  //       modalRef.current.close();
-  //       setOpenModal(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (modalRef.current && e.target === modalRef.current) {
+        modalRef.current.close();
+        setOpenModal(false);
+      }
+    };
 
-  //   if (modalRef.current) {
-  //     modalRef.current.addEventListener('click', handleClickOutside);
-  //   }
+    if (modalRef.current) {
+      modalRef.current.addEventListener('click', handleClickOutside);
+    }
 
-  //   return () => {
-  //     if (modalRef.current) {
-  //       modalRef.current.removeEventListener('click', handleClickOutside);
-  //     }
-  //   };
-  // }, []);
+    return () => {
+      if (modalRef.current) {
+        modalRef.current.removeEventListener('click', handleClickOutside);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (OpenModal) {

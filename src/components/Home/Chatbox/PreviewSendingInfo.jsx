@@ -19,7 +19,7 @@ const PreviewSendingInfo = () => {
   const getDocuments = useSelector((state) => state.user.getDocuments);
   const selectedUser = useSelector((state) => state.user.selectedUser);
 
-  console.log('getDocuments', getDocuments);
+  // console.log('getDocuments', getDocuments);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();

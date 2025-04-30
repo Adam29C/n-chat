@@ -4,10 +4,13 @@ const initialState = {
   authUser: {},
   otherUsers: [],
   updatedUsers: [],
+  filterdShortcut: [],
+  gertfilterdShortcut: '',
 
   selectedUser: null,
   onlineUsers: null,
   showReplay: false,
+  showShortcut: false,
   PreviewImage: false,
   getDocuments: {},
   details: {},
@@ -47,6 +50,15 @@ export const userSlice = createSlice({
     VisiblityPreviewImage: (state, action) => {
       state.PreviewImage = action.payload;
     },
+    VisiblityShortcut: (state, action) => {
+      state.showShortcut = action.payload;
+    },
+    SetShortcutMesg: (state, action) => {
+      state.gertfilterdShortcut = action.payload;
+    },
+    VisiblityFilterdShortcut: (state, action) => {
+      state.filterdShortcut = action.payload;
+    },
     UploadDocument: (state, action) => {
       state.getDocuments = action.payload;
     },
@@ -68,6 +80,9 @@ export const {
   newUpdatedUsers,
   ManageShowTesting,
   setOtherUsers12121,
+  VisiblityShortcut,
+  VisiblityFilterdShortcut,
+  SetShortcutMesg,
 } = userSlice.actions;
 
 export default userSlice.reducer;

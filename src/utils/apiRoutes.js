@@ -6,7 +6,7 @@ const apiRoutes = {
   PING_USERS_UPI: `/user/ping`,
 
   GET_BANK_LIST: `fund-request/bankList`,
-  GET_UPI_LIST: `fund-request/upiList`,
+  GET_UPI_LIST: `upiList`,
   ADD_POINT_URI: `fund-request/addpoint`,
   GET_BROADCAST_MSGS_LIST: `shortcut-messasge/all`,
   GET_SHORTCUT_MSGS_LIST: `shortcut-messasge/all`,
@@ -16,10 +16,11 @@ const apiRoutes = {
   GET_UPLOAD_DOCUMENT_LINK: `/message/upload`,
   GET_AllBROADCAST_MSGS_LIST: `broadcast-messasge/all`,
   REMOVE_BROADCAST_MSGS_LIST: `broadcast-messasge/delete`,
-  CREATE_SHORTCUT_MSGS_LIST: `broadcast-messasge/send`,
+  CREATE_BROADCAST_MSGS_LIST: `broadcast-messasge/send`,
 
   GET_SHORTCUT_MSGS_LIST: `shortcut-messasge/all`,
   UPDATE_SHORTCUT_MSGS_LIST: `shortcut-messasge/update`,
+  FETCH_SHORTCUT_MSGS_LIST: `shortcut-messasge/fetchshort`,
 
   // signupURI: `${import.meta.env.VITE_APP_API_KEY}/user/signup`,
   // loginURI: `${import.meta.env.VITE_APP_API_KEY}/user/login`,

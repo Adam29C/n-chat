@@ -12,13 +12,10 @@ import socket from '../../../utils/Socket';
 import { setOtherUsers } from '../../../Redux/features/user/userSlice';
 
 // import useGetSocketMessage from '../../../context/useGetSocketMessage';
-const Messages = ({ first, ShowReplayBox, setShowReplayBox  }) => {
+const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
-
-
-  
 
   const [loading, setLoading] = useState(false);
 
@@ -38,15 +35,25 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox  }) => {
   const dispatch = useDispatch();
 
   const adada = async () => {
-       let receiverId = selectedUser.userId;
+    let receiverId = selectedUser.userId;
 
     socket.emit('join_room', `${_id}-${receiverId}`);
-    await GetSOketChatHistory(selectedUser, _id, (response) => {
-      // dispatch(setMessage(response));
-      // dispatch(setMessage([...messages, response]));
+
+      socket.on('chat_history', async (data) => {
+
+
+        console.log("data" ,data);
+        
+
+      dispatch(setMessage(data));
     });
 
- 
+    // await GetSOketChatHistory(selectedUser, _id, (response) => {
+    //   console.log('response', response);
+
+    //   // dispatch(setMessage(response));
+    //   // dispatch(setMessage([...messages, response]));
+    // });
 
     // console.log('`${_id}-${receiverId}`', `${_id}-${receiverId}`);
 
@@ -59,7 +66,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox  }) => {
 
   useEffect(() => {
     adada();
-  }, []);
+  }, [selectedUser]);
 
   // const groupByDate = () => {
   //   const grouped = messages

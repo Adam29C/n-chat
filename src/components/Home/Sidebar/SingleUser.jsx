@@ -48,16 +48,20 @@ const SingleUser = ({ data, title, abc }) => {
 
   const handleSelectedUser = async (test) => {
     const receiverId = data?.userId;
-    socket.emit('join_room', `${_id}-${receiverId}`);
 
-    setCreate_roomId(`${_id}-${receiverId}`);
-    // const socket = socketIOClient(base_url);
+    // setCreate_roomId(`${_id}-${receiverId}`);
+
+    let ress = socket.emit('user_connected', test);
 
     let roomId = `${_id}-${receiverId}`;
-
-    let ress = socket.emit('user_connected', _id);
-
+    socket.emit('join_room', roomId);
     socket.emit('get_messages', `${_id}-${receiverId}`);
+
+    socket.on('chat_history', async (data) => {
+      console.log('data', data);
+
+      dispatch(setMessage(data));
+    });
 
     dispatch(setSelectedUsers(data));
 

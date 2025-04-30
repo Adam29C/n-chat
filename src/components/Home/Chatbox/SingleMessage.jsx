@@ -297,7 +297,14 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
                               <i className="flex items-center  text-xs">
                                 <GoCircleSlash />
                                 &nbsp;
-                                {data.message !== '' && data?.message}
+                                <pre
+                                  style={{
+                                    whiteSpace: 'pre-wrap',
+                                    fontFamily: 'monospace',
+                                  }}
+                                >
+                                  {data.message !== '' && data?.message}
+                                </pre>
                               </i>
                             </>
                           ) : (
