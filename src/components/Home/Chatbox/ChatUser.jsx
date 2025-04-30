@@ -44,8 +44,8 @@ const ChatUser = ({ abcd }) => {
   const [open, setOpen] = useState(false);
   const [GetUpiList, setGetUpiList] = useState([]);
 
-  console.log("GetUpiList" ,GetUpiList);
-  
+  console.log('GetUpiList', GetUpiList);
+
   const [GetBankList, setGetBankList] = useState([]);
   const [OpenModal, setOpenModal] = useState(false);
 
@@ -54,7 +54,7 @@ const ChatUser = ({ abcd }) => {
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  // console.log('selectedUser', selectedUser);
+  console.log('selectedUser', selectedUser);
 
   const messages = useSelector((state) => state.message.messages);
 
@@ -117,9 +117,9 @@ const ChatUser = ({ abcd }) => {
   const getUpiList = async () => {
     const res = await FOR_GET_LIST(apiRoutes.GET_UPI_LIST);
 
-    console.log("res" ,res.message.data);
-    
-    setGetUpiList(res.message.data)
+    console.log('res', res.message.data);
+
+    setGetUpiList(res.message.data);
 
     const res1 = await FOR_GET_LIST(apiRoutes.GET_BANK_LIST);
     setGetBankList(res1.data);
@@ -162,7 +162,7 @@ const ChatUser = ({ abcd }) => {
     },
     onSubmit: async (values) => {
       const payload = {
-        userId: _id,
+        userId: selectedUser?.userId,
         type: values.type,
         amount: values.amount,
         paymenttype: values.paymenttype,
@@ -172,9 +172,11 @@ const ChatUser = ({ abcd }) => {
 
       const response = await FOR_POST_REQUEST(apiRoutes.ADD_POINT_URI, payload);
 
-      if (response.status === 'Success') {
+      console.log('response.status', response);
+
+      if (response.message.status === 'Success') {
         setOpenModal(false);
-        toast.success(response.message, {
+        toast.success(response.message.message, {
           position: 'top-center',
         });
       } else if (response.data.status === 0) {
@@ -258,7 +260,6 @@ const ChatUser = ({ abcd }) => {
       label_size: 12,
       col_size: 12,
       display: true,
-
     },
   ];
 

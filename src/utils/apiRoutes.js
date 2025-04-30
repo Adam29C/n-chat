@@ -7,7 +7,7 @@ const apiRoutes = {
 
   GET_BANK_LIST: `fund-request/bankList`,
   GET_UPI_LIST: `upiList`,
-  ADD_POINT_URI: `fund-request/addpoint`,
+  ADD_POINT_URI: `addCreditDebitPoint`,
   GET_BROADCAST_MSGS_LIST: `shortcut-messasge/all`,
   GET_SHORTCUT_MSGS_LIST: `shortcut-messasge/all`,
   REMOVE_SHORTCUT_MSGS_LIST: `shortcut-messasge/delete`,
