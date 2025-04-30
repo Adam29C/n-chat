@@ -117,9 +117,9 @@ const ChatUser = ({ abcd }) => {
   const getUpiList = async () => {
     const res = await FOR_GET_LIST(apiRoutes.GET_UPI_LIST);
 
-    console.log("res" ,res);
+    console.log("res" ,res.message.data);
     
-
+    setGetUpiList(res.message.data)
 
     const res1 = await FOR_GET_LIST(apiRoutes.GET_BANK_LIST);
     setGetBankList(res1.data);
@@ -132,7 +132,7 @@ const ChatUser = ({ abcd }) => {
   const formik = useFormik({
     initialValues: {
       userId: '',
-      type: 'deposit',
+      type: '1',
       amount: '',
       paymenttype: 'UPI',
       upiId: '',
