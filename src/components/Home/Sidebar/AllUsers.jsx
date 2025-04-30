@@ -455,11 +455,30 @@ const InfiniteScrollBox = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
 
+  const [Test, setTest] = useState(1);
+
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const boxRef = useRef(null);
+
+  console.log('otherUsers', otherUsers);
+
+  // useEffect(() => {
+  //   socket.on('update_user_list_entry', (updatedUser) => {
+  //     console.log('updatedUser', updatedUser);
+
+  //     const updatedList = otherUsers
+  //       .map((user) => (user?._id === updatedUser?._id ? updatedUser : user))
+  //       .sort((a, b) => new Date(b.updatedTime) - new Date(a.updatedTime));
+  //     dispatch(setOtherUsers(updatedList));
+  //   });
+
+  //   return () => {
+  //     socket.off('update_user_list_entry');
+  //   };
+  // }, [otherUsers]);
 
   useEffect(() => {
     socket.on('update_user_list_entry', (updatedUser) => {

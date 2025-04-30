@@ -86,9 +86,7 @@ const ProfileHeader = () => {
           </div>
           <div className="w-[80%] truncate">
             <h4 className="fw-bold text-white ">{name}</h4>
-            <p
-              className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
-            ></p>
+        
           </div>
         </div>
       </div>
