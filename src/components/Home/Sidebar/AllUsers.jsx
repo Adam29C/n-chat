@@ -514,7 +514,7 @@ const InfiniteScrollBox = () => {
     <div
       ref={boxRef}
       onScroll={handleScroll}
-      className="h-[87vh] overflow-auto border"
+      className="h-[86vh] overflow-y-scroll border"
     >
       {otherUsers?.map((item, index) => (
         <SingleUser data={item} key={item._id || index} />

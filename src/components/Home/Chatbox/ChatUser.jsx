@@ -20,7 +20,7 @@ import {
 } from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import toast from 'react-hot-toast';
-import { setOtherUsers } from '../../../Redux/features/user/userSlice';
+import { setOtherUsers, VisiblityPreviewImage } from '../../../Redux/features/user/userSlice';
 import { GET_ALL_USERS_URI_API } from '../../../services/users.service';
 import PreviewSendingInfo from './PreviewSendingInfo';
 import {
@@ -44,7 +44,7 @@ const ChatUser = ({ abcd }) => {
   const [open, setOpen] = useState(false);
   const [GetUpiList, setGetUpiList] = useState([]);
 
-  console.log('GetUpiList', GetUpiList);
+  // console.log('GetUpiList', GetUpiList);
 
   const [GetBankList, setGetBankList] = useState([]);
   const [OpenModal, setOpenModal] = useState(false);
@@ -54,7 +54,7 @@ const ChatUser = ({ abcd }) => {
   const selectedUser = useSelector((state) => state.user.selectedUser);
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
-  console.log('selectedUser', selectedUser);
+  // console.log('selectedUser', selectedUser);
 
   const messages = useSelector((state) => state.message.messages);
 
@@ -112,6 +112,8 @@ const ChatUser = ({ abcd }) => {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
     }
+
+    dispatch(VisiblityPreviewImage(true));
   };
 
   const getUpiList = async () => {

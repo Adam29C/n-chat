@@ -6,7 +6,7 @@ const InfiniteScrollBox = () => {
   const [data, setData]     = useState([]);
 
 
-  console.log("data" ,data);
+  // console.log("data" ,data);
   
   const [loading, setLoading] = useState(false);
   const [page, setPage]      = useState(1);

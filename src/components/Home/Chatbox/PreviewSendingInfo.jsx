@@ -6,7 +6,10 @@ import { base_url } from '../../../utils/api_config';
 import { convertTimestamp } from '../../../utils/date.config';
 import { VisiblityPreviewImage } from '../../../Redux/features/user/userSlice';
 import socket from '../../../utils/Socket';
-import { addMessage, setMessage } from '../../../Redux/features/message/messageSlice';
+import {
+  addMessage,
+  setMessage,
+} from '../../../Redux/features/message/messageSlice';
 
 const PreviewSendingInfo = () => {
   const dispatch = useDispatch();

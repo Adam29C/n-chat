@@ -12,13 +12,13 @@ const ReplayMessage = ({ setShowReplayBox, ShowReplayBox }) => {
   // console.log('showReplay', showReplay);
 
   return (
-    <div>
+    <>
       <div
-        className={` flex justify-center items-center bg-gray-200 ${showReplay ? 'block' : 'hidden'}`}
+        className={` flex justify-center items-center rounded-4  px-1 bg-gray-200 ${showReplay ? 'block' : 'hidden'}`}
       >
-        <div className=" w-full max-w-[90%] md:max-w-[80%] lg:max-w-[70%] flex justify-between items-center   rounded-2 shadow min-w-[250px]">
-          <div className="flex items-center justify-between bg-gray-400 rounded-[1vw]  py-3 w-full">
-            <div className=" h-20 overflow-y-scroll flex flex-col ">
+        <div className=" w-full max-w-[90%] md:max-w-[80%] lg:max-w-[70%] flex justify-between items-center    shadow min-w-[250px]">
+          <div className="flex items-center justify-between bg-gray-300  p-2  w-full">
+            <div className=" h-[60px] overflow-y-scroll flex flex-col ">
               <span className="text-green-900 font-semibold text-sm">
                 {details?.username}
               </span>
@@ -33,7 +33,7 @@ const ReplayMessage = ({ setShowReplayBox, ShowReplayBox }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

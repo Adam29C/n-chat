@@ -141,14 +141,15 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
       <div
         className={`pt-3  ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
         // style={{ minHeight: 'calc(89vh - 10vh)' }}
-        style={{ minHeight: 'calc(96vh - 3vh)' }}
+
+        style={{ minHeight: '' }}
       >
         {loadingMessages ? (
           <MessageLoader />
         ) : (
           <>
             {messages?.length <= 0 ? (
-              <div className="w-full h-60 flex items-center justify-center">
+              <div className="w-full max-h-[80vh] flex items-center justify-center ttttttttt">
                 <p className="text-base md:text-xl lg:text-2xl">
                   Say! Hi to start the conversation
                 </p>
@@ -159,8 +160,8 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
                   {Object.keys(groupedMessages)
                     .sort()
                     .map((date) => (
-                      <div key={date}>
-                        <div className=" flex items-center justify-center ">
+                      <div key={date} className='ttttttttt'>
+                        <div className=" flex items-center justify-center  ">
                           <span className="bg-gray-300 rounded-lg  px-3 py-1 gap-3">
                             {date}
                           </span>

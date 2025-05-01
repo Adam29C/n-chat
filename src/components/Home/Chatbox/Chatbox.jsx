@@ -31,6 +31,7 @@ const Chatbox = () => {
   const PreviewImage = useSelector((state) => state.user.PreviewImage);
   const showShortcut = useSelector((state) => state.user.showShortcut);
 
+  const showReplay = useSelector((state) => state.user.showReplay);
   const messages = useSelector((state) => state.message.messages);
   const otherUsers = useSelector((state) => state.user.otherUsers);
 
@@ -112,10 +113,7 @@ const Chatbox = () => {
               />
             </div>
           </div>
-          
         </div>
-
-        
       ) : (
         <div
           className={`w-[100%] h-screen ${darkMode ? 'bg-slate-900' : 'bg-slate-100'} ${showSelectedUserBtn ? 'inline-block' : 'hidden'} md:inline-block  md:w-[60%] lg:w-[76%]`}
@@ -125,8 +123,10 @@ const Chatbox = () => {
           <PreviewSendingInfo />
 
           <div
-            className="custom-margin    md:overflow-y-auto lg:overflow-y-auto    flex flex-col gap-2
-            hide_scrollbar max-h-[10vh] md:max-h-[81vh] lg:max-h-[78vh] "
+            className={`custom-margin md:overflow-y-auto lg:overflow-y-auto flex flex-col 
+              hide_scrollbar max-h-[10vh] 
+       
+              ${showReplay || showShortcut ? '  md:max-h-[63vh] lg:max-h-[67vh]' : '  md:max-h-[69vh] lg:max-h-[80vh]'}`}
           >
             {!PreviewImage && (
               <Messages
@@ -140,7 +140,7 @@ const Chatbox = () => {
           </div>
 
           <div className=" w-full fixed bottom-0 md:static md:bottom-0 lg:static lg:z-0 ">
-            <ReplayMessage />
+          <ReplayMessage />
             <ShowShortcut />
             <MessageSend setfirst={setfirst} first={first} socket={socket} />
           </div>

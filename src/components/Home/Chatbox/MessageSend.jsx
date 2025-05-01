@@ -59,7 +59,8 @@ const MessageSend = ({ setfirst }) => {
     (state) => state.user.gertfilterdShortcut
   );
 
-  console.log('message121', typeof gertfilterdShortcut);
+  console.log('gertfilterdShortcut', gertfilterdShortcut);
+  console.log('message121', message121);
 
   const messages = useSelector((state) => state.message.messages);
 
@@ -85,7 +86,6 @@ const MessageSend = ({ setfirst }) => {
       dispatch(VisiblityFilterdShortcut(response.returnArr));
       dispatch(VisiblityShortcut(true));
     } else {
-      // setMessage121(inputValue);
       dispatch(VisiblityShortcut(false));
     }
   };
@@ -220,15 +220,15 @@ const MessageSend = ({ setfirst }) => {
               </span>
             ) : (
               <>
-                <div className="relative">
+                {/* <div className="relative">
                   <button
-                    ref={btnRef}
+                    // ref={btnRef}
                     className="p-2 me-5"
                     onClick={() => setOpen(!open)}
                   >
                     <FaPlus className="text-2xl" />
                   </button>
-                </div>
+                </div> */}
 
                 <button
                   className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
