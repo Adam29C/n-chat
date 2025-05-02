@@ -39,11 +39,8 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
 
     socket.emit('join_room', `${_id}-${receiverId}`);
 
-      socket.on('chat_history', async (data) => {
-
-
-        console.log("data" ,data);
-        
+    socket.on('chat_history', async (data) => {
+      console.log('data', data);
 
       dispatch(setMessage(data));
     });
@@ -149,7 +146,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
         ) : (
           <>
             {messages?.length <= 0 ? (
-              <div className="w-full max-h-[80vh] flex items-center justify-center ttttttttt">
+              <div className="w-full  flex items-center justify-center ttttttttt">
                 <p className="text-base md:text-xl lg:text-2xl">
                   Say! Hi to start the conversation
                 </p>
@@ -160,7 +157,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
                   {Object.keys(groupedMessages)
                     .sort()
                     .map((date) => (
-                      <div key={date} className='ttttttttt'>
+                      <div key={date} className="">
                         <div className=" flex items-center justify-center  ">
                           <span className="bg-gray-300 rounded-lg  px-3 py-1 gap-3">
                             {date}

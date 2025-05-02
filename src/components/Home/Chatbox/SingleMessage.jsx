@@ -36,8 +36,6 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   const messages = useSelector((state) => state.message.messages);
   let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
-  // console.log('messages', messages);
-
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
@@ -126,37 +124,44 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
 
   let abc = [];
   const selectUsers = (item) => {
+    const receivers = [selectedUser.userId];
     abc.push(item.userId);
   };
 
   let msgID = '';
   const forwordMessage = (messageId) => {
-    document.getElementById('my_modal_5').showModal();
+    setMsgId(messageId._id);
 
     msgID += messageId._id;
     setforwordmsg(messageId.message);
-    setMsgId(messageId._id);
     setOpenModal(!OpenModal);
+    document.getElementById('my_modal_5').showModal();
   };
 
-  const MessageForword = () => {
-    // console.log("{ messageId: data._id"  ,{
-    //   messageId: data._id,
-    //   sender: _id,
-    //   receivers: abc,
-    // });
+  console.log('outside', MsgId);
 
-    socket.emit('forward_message', {
-      messageId: data._id,
+  const MessageForword = () => {
+    console.log('inside', MsgId);
+
+    console.log('{ messageId: data._id', {
+      messageId: MsgId,
       sender: _id,
       receivers: abc,
       dateTime: convertTimestamp(new Date().toISOString()),
       dateTimestamp: Date.now(),
     });
 
-    setTimeout(() => {
-      document.getElementById('my_modal_5').close();
-    }, 1000);
+    // socket.emit('forward_message', {
+    //   messageId: data._id,
+    //   sender: _id,
+    //   receivers: abc,
+    //   dateTime: convertTimestamp(new Date().toISOString()),
+    //   dateTimestamp: Date.now(),
+    // });
+
+    // setTimeout(() => {
+    //   document.getElementById('my_modal_5').close();
+    // }, 1000);
   };
 
   return (
@@ -178,7 +183,12 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
               <li className="px-3 py-1" onClick={() => manageReplay()}>
                 Reply
               </li>
-              <li className="px-3 py-1" onClick={() => forwordMessage(data)}>
+              <li
+                className="px-3 py-1"
+                onClick={() => {
+                  forwordMessage(data), setMsgId(data?._id);
+                }}
+              >
                 Forword
               </li>
             </>
@@ -191,7 +201,7 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
           <>
             {_id === data.sender && data?.replyName != null ? (
               <>
-                <div className="mb-2 max-w-[80%] self-end">
+                <div className="mb-2 max-w-[40%] self-end">
                   <div
                     className="bg-gray-100   border-l-4  rounded-t-md px-3 py-1"
                     style={{
@@ -314,14 +324,14 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
                                 </i>
                               </>
                             ) : (
-                              <span
-                                style={{
-                                  whiteSpace: 'pre-wrap',
-                                }}
-                                className="text-sm"
-                              >
-                                {data.message !== '' && data?.message}
-                              </span>
+                              // <span
+                              //   style={{
+                              //     whiteSpace: 'pre-wrap',
+                              //   }}
+                              //   className="text-sm"
+                              // >
+                                data.message !== '' && data?.message
+                              // </span>
                             )}
                           </div>
                         </span>
@@ -337,70 +347,70 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
             )}
           </>
         </div>
-      </div>
-      <dialog id="my_modal_5" className="modal  modal-middle">
-        <div className="modal-box md:w-[1200px] h-[1200px] flex flex-col">
-          <div className="flex justify-between items-center border-b-2 border-darks-600">
-            <h3 className="font-bold text-lg">
-              {/* {forwordmsg && forwordmsg} */}
-            </h3>
-            <div className="modal-action ">
-              <form method="dialog" className="modal-action ">
-                <span className="btn w-sm">X</span>
+        <dialog id="my_modal_5" className="modal  modal-middle">
+          <div className="modal-box md:w-[1200px] h-[1200px] flex flex-col">
+            <div className="flex justify-between items-center border-b-2 border-darks-600">
+              <h3 className="font-bold text-lg">
+                {/* {forwordmsg && forwordmsg} */}
+              </h3>
+              <div className="modal-action ">
+                <form method="dialog" className="modal-action ">
+                  <span className="btn w-sm">X</span>
+                </form>
+              </div>
+            </div>
+
+            {/* Scrollable content area */}
+            <div className="flex-1 overflow-y-auto py-4">
+              <ul class="divide-y divide-gray-200">
+                {otherUsers?.map((item, index) => (
+                  <li class="flex items-center justify-between py-2">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 main-bg rounded-full flex items-center justify-center text-white text-sm mr-3">
+                        <svg
+                          class="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5.121 17.804A4 4 0 0112 15h0a4 4 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      </div>
+                      <span class="text-gray-800 text-sm">
+                        {item?.userName}
+                        {/* {console.log('forwordmsg', forwordmsg)}
+                      {forwordmsg ? JSON.stringify(forwordmsg) : "null"} */}
+                      </span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      class="form-checkbox"
+                      onChange={() => selectUsers(item)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-t mt-4 pt-4 flex justify-end gap-2">
+              <form method="dialog">
+                <button className="btn">Close</button>
               </form>
+              <button
+                className="btn btn-primary"
+                onClick={() => MessageForword()}
+              >
+                Submit
+              </button>
             </div>
           </div>
-
-          {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto py-4">
-            <ul class="divide-y divide-gray-200">
-              {otherUsers?.map((item, index) => (
-                <li class="flex items-center justify-between py-2">
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 main-bg rounded-full flex items-center justify-center text-white text-sm mr-3">
-                      <svg
-                        class="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M5.121 17.804A4 4 0 0112 15h0a4 4 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    </div>
-                    <span class="text-gray-800 text-sm">
-                      {item?.userName}
-                      {/* {console.log('forwordmsg', forwordmsg)}
-                      {forwordmsg ? JSON.stringify(forwordmsg) : "null"} */}
-                    </span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    class="form-checkbox"
-                    onChange={() => selectUsers(item)}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="border-t mt-4 pt-4 flex justify-end gap-2">
-            <form method="dialog">
-              <button className="btn">Close</button>
-            </form>
-            <button
-              className="btn btn-primary"
-              onClick={() => MessageForword()}
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </dialog>
+        </dialog>
+      </div>
     </>
   );
 };

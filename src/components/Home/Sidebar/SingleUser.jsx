@@ -56,10 +56,11 @@ const SingleUser = ({ data, title, abc }) => {
     let roomId = `${_id}-${receiverId}`;
     socket.emit('join_room', roomId);
 
-    socket.emit('get_messages', `${'61fbd0cd41b0d43022cabf27'}-${receiverId}`);
+    // socket.emit('get_messages', `${'61fbd0cd41b0d43022cabf27'}-${receiverId}`);
+    socket.emit('get_messages', roomId);
 
     socket.on('chat_history', async (data) => {
-      // console.log('data', data);
+      console.log('data', data);
 
       dispatch(setMessage(data));
     });

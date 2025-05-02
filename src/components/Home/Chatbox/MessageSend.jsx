@@ -59,8 +59,8 @@ const MessageSend = ({ setfirst }) => {
     (state) => state.user.gertfilterdShortcut
   );
 
-  console.log('gertfilterdShortcut', gertfilterdShortcut);
-  console.log('message121', message121);
+  // console.log('gertfilterdShortcut', gertfilterdShortcut);
+  // console.log('message121', message121);
 
   const messages = useSelector((state) => state.message.messages);
 
