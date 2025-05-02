@@ -16,6 +16,7 @@ import DialogBox from '../../HelpersComponents/DialogBox';
 import {
   FOR_GET_LIST,
   FOR_POST_REQUEST,
+  FOR_UPDATE_REQUEST,
 } from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import toast from 'react-hot-toast';
@@ -23,7 +24,6 @@ import {
   setOtherUsers,
   VisiblityPreviewImage,
 } from '../../../Redux/features/user/userSlice';
-
 import { GET_ALL_USERS_URI_API } from '../../../services/users.service';
 import PreviewSendingInfo from './PreviewSendingInfo';
 import {
@@ -31,36 +31,43 @@ import {
   Get_Year_With_Time_With_Column_Saprate,
 } from '../../../helpers/helpers';
 import { useNavigate } from 'react-router-dom';
-
 const ChatUser = ({ abcd }) => {
+  // console.log('abcd', abcd);
   const navigate = useNavigate();
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
-
   const btnRef = useRef(null);
   const menuRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   const [image, setImage] = useState(null);
+
+  const fileInputRef = useRef(null);
+
   const [open, setOpen] = useState(false);
   const [GetUpiList, setGetUpiList] = useState([]);
+
+  // console.log('GetUpiList', GetUpiList);
+
   const [GetBankList, setGetBankList] = useState([]);
   const [OpenModal, setOpenModal] = useState(false);
-  const [showChatUser, setShowChatUser] = useState(false);
 
+  const [showChatUser, setShowChatUser] = useState(false);
   const darkMode = useSelector((state) => state.darkTheme.value);
   const selectedUser = useSelector((state) => state.user.selectedUser);
+  const otherUsers = useSelector((state) => state.user.otherUsers);
+
+  // console.log('selectedUser', selectedUser);
+
   const messages = useSelector((state) => state.message.messages);
+
+  let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
+
+  // console.log('cjaj users =' ,noReadedId);
 
   const { socket, onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(selectedUser._id);
-
   const dispatch = useDispatch();
-
-  const noReadedId = messages
-    .filter((msg) => !msg.isRead)
-    .map((msg) => msg._id);
 
   const handleHideChatUser = (data) => {
     setShowChatUser(data);
@@ -68,6 +75,7 @@ const ChatUser = ({ abcd }) => {
 
   const handleProfileBackBtn = () => {
     dispatch(showSelectedUser(false));
+    // setShowChatUser(false);
   };
 
   const menuBtn = () => {
@@ -101,19 +109,28 @@ const ChatUser = ({ abcd }) => {
   }, []);
 
   const handleImageUpload = (event) => {
+    console.log('testtt');
+    alert();
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
-      dispatch(VisiblityPreviewImage(true));
     }
+
+    dispatch(VisiblityPreviewImage(true));
+
+    // dispatch(VisiblityPreviewImage(true));
   };
 
   const getUpiList = async () => {
     const res = await FOR_GET_LIST(apiRoutes.GET_UPI_LIST);
-    setGetUpiList(res.message.data || []);
+
+    console.log('res', res.message.data);
+
+    setGetUpiList(res.message.data);
+
     const res1 = await FOR_GET_LIST(apiRoutes.GET_BANK_LIST);
-    setGetBankList(res1.data || []);
+    setGetBankList(res1.data);
   };
 
   useEffect(() => {
@@ -129,15 +146,26 @@ const ChatUser = ({ abcd }) => {
       upiId: '',
       refrenceNumber: '',
     },
+
     validate: (values) => {
       const errors = {};
-      if (!values.amount) errors.amount = 'Amount is required';
-      else if (parseInt(values.amount) < 10)
-        errors.amount = 'Amount must be greater than 10';
-      if (!values.upiId) errors.upiId = 'Please select UPI';
-      if (!values.paymenttype) errors.paymenttype = 'Please select Type';
-      if (!values.refrenceNumber)
-        errors.refrenceNumber = 'Please enter Reference Number';
+
+      if (!values.amount) {
+        errors.amount = 'amount is required';
+      } else if (parseInt(values.amount) < 10) {
+        errors.amount = 'amount must have grater  then 10';
+      }
+
+      if (!values.upiId) {
+        errors.upiId = 'Please Select UPI';
+      }
+
+      if (!values.paymenttype) {
+        errors.paymenttype = 'Please Select Type';
+      }
+      if (!values.refrenceNumber) {
+        errors.refrenceNumber = 'Please Enter Refrence Number';
+      }
       return errors;
     },
     onSubmit: async (values) => {
@@ -152,12 +180,23 @@ const ChatUser = ({ abcd }) => {
 
       const response = await FOR_POST_REQUEST(apiRoutes.ADD_POINT_URI, payload);
 
-      if (response.message?.status === 'Success') {
+      console.log('response.status', response);
+
+      if (response.message.status === 'Success') {
         setOpenModal(false);
-        toast.success(response.message.message, { position: 'top-center' });
+        toast.success(response.message.message, {
+          position: 'top-center',
+        });
+      } else if (response.data.status === 0) {
+        setOpenModal(false);
+
+        toast.error(response.data.message, {
+          position: 'top-center',
+        });
       } else {
         setOpenModal(false);
-        toast.error(response.data?.message || 'Something went wrong', {
+
+        toast.error(response.data.message, {
           position: 'top-center',
         });
       }
@@ -170,10 +209,17 @@ const ChatUser = ({ abcd }) => {
       label: 'Type',
       type: 'select',
       label_size: 12,
+      default: 'Open',
       col_size: 3,
       options: [
-        { label: 'Add', value: '1' },
-        { label: 'Minus', value: '2' },
+        {
+          label: 'Credit(Deposit)',
+          value: '1',
+        },
+        {
+          label: 'Debit(Withdrwal)',
+          value: '2',
+        },
       ],
     },
     {
@@ -182,37 +228,92 @@ const ChatUser = ({ abcd }) => {
       type: 'text',
       label_size: 12,
       col_size: 12,
+      display: true,
     },
     {
       name: 'paymenttype',
       label: 'Particular',
       type: 'select',
       label_size: 12,
+
       col_size: 3,
-      options: GetBankList?.map((item) => ({
-        label: item.bankname,
-        value: item._id,
-      })),
+      options:
+        (GetBankList &&
+          GetBankList.map((item) => ({
+            label: item.name,
+            value: item.bankName,
+          }))) ||
+        [],
     },
     {
       name: 'upiId',
-      label: 'UPI Id',
+      label: 'UPI List',
       type: 'select',
       label_size: 12,
-      col_size: 6,
-      options: GetUpiList?.map((item) => ({
-        label: item.upiid,
-        value: item._id,
-      })),
+
+      col_size: 3,
+      options:
+        (GetUpiList &&
+          GetUpiList.map((item) => ({
+            label: item.UPI_ID,
+            value: item._id,
+          }))) ||
+        [],
     },
+
     {
       name: 'refrenceNumber',
-      label: 'Reference Number',
+      label: 'Reference Number:',
       type: 'text',
       label_size: 12,
       col_size: 12,
+      display: true,
     },
   ];
+
+  // PING USER
+
+  const PingUsers = async () => {
+    const payload = {
+      id: selectedUser._id,
+      isPinged: selectedUser.userPin === 0 ? true : false,
+    };
+
+    const response = await FOR_UPDATE_REQUEST(
+      apiRoutes.PING_USERS_UPI,
+      payload
+    );
+
+    if (response.status === 'success') {
+      // const res = await GET_ALL_USERS_URI_API();
+
+      // dispatch(setOtherUsers(res?.data.users));
+      setOpenModal(false);
+      toast.success(response.message, {
+        position: 'top-center',
+      });
+    }
+  };
+
+  // console.log('noReadedId', noReadedId);
+  // const room_ID = `${_id}-${selectedUser?.userId}`;
+  // useEffect(() => {
+  //   console.log(' { room: roomId, messageIds: noReadedId }', {
+  //     room: room_ID,
+  //     messageIds: noReadedId,
+  //   });
+  //   // socket.emit('mark_read', { room: room_ID, messageIds: noReadedId });
+  // }, [room_ID]);
+
+  // const showTesting = useSelector((state) => state.user.showTesting);
+
+  // console.log('showTesting', showTesting);
+
+  // const CallUsers = () => {
+  //   // navigate('https://chatit.minidog.club/main');
+
+  //   window.location.href = 'https://chatit.minidog.club/main?';
+  // };
 
   return (
     <>
@@ -258,8 +359,8 @@ const ChatUser = ({ abcd }) => {
         <div className="relative">
           <div className="flex items-center">
             {/* <div onClick={() => CallUsers()} className="p-1">
-            <TbPhoneCalling className="text-2xl" />
-          </div> */}
+              <TbPhoneCalling className="text-2xl" />
+            </div> */}
             <button
               ref={btnRef}
               onClick={() => handleLogOutBtn()}
@@ -325,21 +426,21 @@ const ChatUser = ({ abcd }) => {
                     </span>
                   </button>
                   {/* <input
-                  type="file"
-                  accept="video"
-                  onChange={() => handleImageUpload()}
-                  ref={fileInputRef}
-                  className="hidden"
-                />
-                {image && (
-                  <div className="flex flex-col items-center space-y-2">
-                    <img
-                      src={image}
-                      alt="Uploaded"
-                      className="max-w-full h-auto"
-                    />
-                  </div>
-                )} */}
+                    type="file"
+                    accept="video"
+                    onChange={() => handleImageUpload()}
+                    ref={fileInputRef}
+                    className="hidden"
+                  />
+                  {image && (
+                    <div className="flex flex-col items-center space-y-2">
+                      <img
+                        src={image}
+                        alt="Uploaded"
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                  )} */}
                 </li>
               </ul>
             </div>

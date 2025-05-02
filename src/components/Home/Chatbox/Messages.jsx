@@ -10,13 +10,13 @@ import socketIOClient from 'socket.io-client';
 import { GetSOketChatHistory } from '../../../utils/Socket.Io';
 import socket from '../../../utils/Socket';
 import { setOtherUsers } from '../../../Redux/features/user/userSlice';
-
+import { useRef } from 'react';
 // import useGetSocketMessage from '../../../context/useGetSocketMessage';
 const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   const { _id, email, mobile, name, role } = JSON.parse(
     localStorage.getItem('info')
   );
-
+  const bottomRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
   const [groupedMessages, setGroupedMessages] = useState([]);
@@ -34,36 +34,57 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
 
   const dispatch = useDispatch();
 
-  const adada = async () => {
-    let receiverId = selectedUser.userId;
-
-    socket.emit('join_room', `${_id}-${receiverId}`);
-
-    socket.on('chat_history', async (data) => {
-      console.log('data', data);
-
-      dispatch(setMessage(data));
-    });
-
-    // await GetSOketChatHistory(selectedUser, _id, (response) => {
-    //   console.log('response', response);
-
-    //   // dispatch(setMessage(response));
-    //   // dispatch(setMessage([...messages, response]));
-    // });
-
-    // console.log('`${_id}-${receiverId}`', `${_id}-${receiverId}`);
-
-    // socket.emit('get_messages', `${_id}-${receiverId}`);
-
-    // socket.on('chat_history', async (data) => {
-    //   dispatch(setMessage(data));
-    // });
-  };
-
   useEffect(() => {
-    adada();
+    const receiverId = selectedUser.userId;
+    const roomId = `${_id}-${receiverId}`;
+    socket.emit('join_room', roomId);
+
+    const handleChatHistory = (data) => {
+      console.log('data', data);
+      dispatch(setMessage(data));
+    };
+
+    socket.on('chat_history', handleChatHistory);
+
+    return () => {
+      socket.off('chat_history', handleChatHistory);
+    };
   }, [selectedUser]);
+
+  // const adada = async () => {
+  //   let receiverId = selectedUser.userId;
+
+  //   socket.emit('join_room', `${_id}-${receiverId}`);
+
+  //   socket.on('chat_history', async (data) => {
+  //     console.log('data', data);
+
+  //     dispatch(setMessage(data));
+  //   });
+
+  //   // await GetSOketChatHistory(selectedUser, _id, (response) => {
+  //   //   console.log('response', response);
+
+  //   //   // dispatch(setMessage(response));
+  //   //   // dispatch(setMessage([...messages, response]));
+  //   // });
+
+  //   // console.log('`${_id}-${receiverId}`', `${_id}-${receiverId}`);
+
+  //   // socket.emit('get_messages', `${_id}-${receiverId}`);
+
+  //   // socket.on('chat_history', async (data) => {
+  //   //   dispatch(setMessage(data));
+  //   // });
+
+  //   return () => {
+  //     socket.off('chat_history', handleChatHistory);
+  //   };
+  // };
+
+  // useEffect(() => {
+  //   adada();
+  // }, [selectedUser]);
 
   // const groupByDate = () => {
   //   const grouped = messages
@@ -101,7 +122,7 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
     const dates = Object.keys(grouped).sort();
 
     // Save dates (for rendering sections)
-    settewsting(dates);
+    // settewsting(dates);
 
     // If needed, also save grouped data
     setGroupedMessages(grouped);
@@ -129,14 +150,13 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
   //   // socket.emit('mark_read', { room: room_ID, messageIds: noReadedId });
   // }, [room_ID]);
 
+  // console.log('groupedMessages', groupedMessages);
+
+
   return (
     <>
-      {/* <div className="" style={{ minHeight: "calc(91vh - 8vh)" }}> */}
-      {/* <button onClick={handleClick}>111111sclick</button> */}
-
-      {/* <div id="scroll-up"></div> */}
       <div
-        className={`pt-3  ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
+        className={`${messages?.length <= 0 ? 'testing-pdd' : 'pt-10 md:pt-[60px] lg:pt-[25px] mb-[35px]'}   `}
         // style={{ minHeight: 'calc(89vh - 10vh)' }}
 
         style={{ minHeight: '' }}
@@ -157,7 +177,10 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
                   {Object.keys(groupedMessages)
                     .sort()
                     .map((date) => (
-                      <div key={date} className="">
+                      <div
+                        key={date}
+                        className={`${groupedMessages[date].length < 2 ? 'ttttttttt' : ''}`}
+                      >
                         <div className=" flex items-center justify-center  ">
                           <span className="bg-gray-300 rounded-lg  px-3 py-1 gap-3">
                             {date}
@@ -179,8 +202,8 @@ const Messages = ({ first, ShowReplayBox, setShowReplayBox }) => {
           </>
         )}
       </div>
+
       <Toaster />
-      {/* <div id="scroll-down"></div> */}
     </>
   );
 };

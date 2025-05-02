@@ -101,7 +101,7 @@ const Chatbox = () => {
         <AiMessageBox />
       ) : !selectedUser ? (
         <div
-          className={`w-[100%] md:inline-block  md:w-[60%] lg:w-[76%] h-screen ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  ${showSelectedUserBtn ? 'inline-block' : 'hidden'} `}
+          className={`w-[100%] md:inline-block  md:w-[60%] lg:w-[76%] h-screen  ${showSelectedUserBtn ? 'inline-block' : 'hidden'} `}
         >
           <div className="w-[100%] h-full flex items-center justify-center main-bg">
             <div className="flex flex-col root-color">
@@ -116,17 +116,18 @@ const Chatbox = () => {
         </div>
       ) : (
         <div
-          className={`w-[100%] h-screen ${darkMode ? 'bg-slate-900' : 'bg-slate-100'} ${showSelectedUserBtn ? 'inline-block' : 'hidden'} md:inline-block  md:w-[60%] lg:w-[76%]`}
+          className={`w-[100%] h-screen  ${showSelectedUserBtn ? 'inline-block' : 'hidden'} md:inline-block  md:w-[60%] lg:w-[76%]`}
         >
           <ChatUser />
 
           <PreviewSendingInfo />
 
           <div
-            className={`custom-margin md:overflow-y-auto lg:overflow-y-auto flex flex-col 
-              hide_scrollbar max-h-[10vh] 
-       
-              ${showReplay || showShortcut ? '  md:max-h-[63vh] lg:max-h-[67vh]' : '  md:max-h-[69vh] lg:max-h-[80vh]'}`}
+            className={`custom-margin  bg-gray-200
+              ${showReplay || showShortcut ? '  md:max-h-[63vh] lg:max-h-[67vh]' : 
+                PreviewImage ? 'max-h-[20vh] md:max-h-[0vh] lg:max-h-[0vh]' :
+                
+                'md:max-h-[69vh] lg:max-h-[80vh]'}`}
           >
             {!PreviewImage && (
               <Messages
@@ -140,9 +141,10 @@ const Chatbox = () => {
           </div>
 
           <div className=" w-full fixed bottom-0 md:static md:bottom-0 lg:static lg:z-0 ">
-          <ReplayMessage />
+            <ReplayMessage />
             <ShowShortcut />
-            <MessageSend setfirst={setfirst} first={first} socket={socket} />
+            {/* <MessageSend setfirst={setfirst} first={first} socket={socket} /> */}
+            <MessageSend socket={socket} />
           </div>
         </div>
       )}

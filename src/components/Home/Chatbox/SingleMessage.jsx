@@ -33,6 +33,8 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
     localStorage.getItem('info')
   );
 
+  const bottomRef = useRef(null);
+
   const messages = useSelector((state) => state.message.messages);
   let noReadedId = messages.filter((msg) => !msg.isRead).map((msg) => msg._id);
 
@@ -60,7 +62,7 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
   });
 
   const ShowHiddenTabs = () => {
-    setOpen(!open);
+    setOpen(true);
   };
 
   useEffect(() => {
@@ -138,10 +140,10 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
     document.getElementById('my_modal_5').showModal();
   };
 
-  console.log('outside', MsgId);
+  // console.log('outside', MsgId);
 
   const MessageForword = () => {
-    console.log('inside', MsgId);
+    // console.log('inside', MsgId);
 
     console.log('{ messageId: data._id', {
       messageId: MsgId,
@@ -164,6 +166,14 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
     // }, 1000);
   };
 
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  // console.log("messages" ,messages);
+
   return (
     <>
       <div>
@@ -183,14 +193,14 @@ const SingleMessage = ({ data, setShowReplayBox, dates, groupedMessages }) => {
               <li className="px-3 py-1" onClick={() => manageReplay()}>
                 Reply
               </li>
-              <li
+              {/* <li
                 className="px-3 py-1"
                 onClick={() => {
                   forwordMessage(data), setMsgId(data?._id);
                 }}
               >
                 Forword
-              </li>
+              </li> */}
             </>
           }
         />
@@ -324,14 +334,14 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
                                 </i>
                               </>
                             ) : (
-                              // <span
-                              //   style={{
-                              //     whiteSpace: 'pre-wrap',
-                              //   }}
-                              //   className="text-sm"
-                              // >
-                                data.message !== '' && data?.message
-                              // </span>
+                              <span
+                                style={{
+                                  whiteSpace: 'pre-wrap',
+                                }}
+                                className="text-sm"
+                              >
+                                {data.message !== '' && data?.message}
+                              </span>
                             )}
                           </div>
                         </span>
@@ -410,6 +420,8 @@ ${'isSender' == 'isSender' ? 'bg-blue-500 text-white' : darkMode ? 'bg-slate-800
             </div>
           </div>
         </dialog>
+
+        <div className="bottomRef" ref={bottomRef} />
       </div>
     </>
   );

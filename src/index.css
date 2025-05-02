@@ -60,11 +60,11 @@ table {
 }
 
 .font-sizes {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .add-point-btn {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .test-color {
@@ -122,7 +122,8 @@ table {
 }
 
 .replay-message-border {
-  border-left: 42px solid  linear-gradient(97.51deg, #1c3e35 -39.91%, #4aa48c 117.67%) !important;
+  border-left: 42px solid
+    linear-gradient(97.51deg, #1c3e35 -39.91%, #4aa48c 117.67%) !important;
 }
 .chat-end .chat-bubble {
   /* background: #fff !important; */
@@ -139,7 +140,31 @@ table {
 .main-bg {
   background: var(--main-color);
 }
+.ttttttttt {
+  /* height: 80vh;
+  border: 2px solid black; */
 
+  position: relative;
+}
+
+.send-button {
+  position: absolute;
+  bottom: 10vh;
+  /* width: 80% !important; */
+  /* left: 19%; */
+}
+.custom-margin {
+  /* height: 72vh; */
+  /* margin-top: 79px; */
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  overflow-y: scroll;
+}
+
+.testing-pdd {
+  padding-top: 15rem;
+}
 @media (max-width: 1024px) {
   .custom-margin {
     margin-top: 79px;
@@ -153,6 +178,19 @@ table {
 @media (min-width: 320px) and (max-width: 1024px) {
   .nav {
     background: red;
+  }
+  .ttttttttt {
+    /* height: 35vh; */
+  }
+  /* .custom-margin {
+    height: 80vh;
+ 
+   } */
+  .send-button {
+    position: absolute;
+    bottom: 4vh;
+    /* width: 80% !important; */
+    /* left: 19%; */
   }
 }
 @media (min-width: 320px) and (max-width: 1024px) {

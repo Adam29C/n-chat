@@ -123,6 +123,10 @@ const MessageSend = ({ setfirst }) => {
       socket.on('latest_message', handleMessage);
 
       setMessage121('');
+
+      return () => {
+        socket.off('latest_message', handleMessage);
+      };
     }
     dispatch(VisiblityReplay(false));
   };
@@ -178,7 +182,7 @@ const MessageSend = ({ setfirst }) => {
     <>
       <form onSubmit={handleSendMessage}>
         <div
-          className={`h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
+          className={`  h-[10vh] w-full flex justify-center items-center ${darkMode ? 'bg-slate-900' : 'bg-gray-200'}  `}
           ref={modalRef}
         >
           {isPickerVisible && (
@@ -194,7 +198,7 @@ const MessageSend = ({ setfirst }) => {
             </div>
           )}
           <div
-            className={`w-[90%] md:w-[80%] lg:w-[70%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
+            className={` send-button w-[90%] sm:w-[50%] md:w-[50%] lg:w-[50%]  flex justify-between items-center ${darkMode ? 'bg-slate-800' : 'bg-white'} rounded-full shadow`}
           >
             <button
               className={`${darkMode ? 'bg-slate-700 hover:bg-slate-900 text-white' : 'bg-slate-100 hover:bg-slate-300'} rounded-full  p-2 mx-1`}
@@ -224,11 +228,112 @@ const MessageSend = ({ setfirst }) => {
                   <button
                     // ref={btnRef}
                     className="p-2 me-5"
-                    onClick={() => setOpen(!open)}
+                    onClick={() => setOpen((prev) => !prev)}
                   >
                     <FaPlus className="text-2xl" />
                   </button>
                 </div> */}
+
+                <div className="dropdown">
+                  <div tabIndex={0} role="span" className="bg-transparent px-6 m-1">
+                    <FaPlus className="text-2xl" />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-1 w-32 p-2 shadow-sm"
+                    style={{ bottom: '100%' }}
+                  >
+                    <div className="px-3 flex items-center">
+                      <IoImagesOutline className="text-lg" />
+                      <li
+                        className="flex items-center py-1"
+                        onClick={() => fileInputRef.current.click()}
+                      >
+                        <span className="mx-2 rounded-md">Image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            setOpen(false);
+                          }}
+                          ref={fileInputRef}
+                          className="hidden"
+                        />
+                      </li>
+                    </div>
+
+                    <div className="px-3  flex items-center">
+                      <IoVideocamOutline className="text-lg" />
+                      <li
+                        className="flex items-center"
+                        onClick={() => VideofileInputRef.current.click()}
+                      >
+                        <span className="mx-2 rounded-md">Video</span>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            setOpen(false);
+                          }}
+                          ref={VideofileInputRef}
+                          className="hidden"
+                        />
+                      </li>
+                    </div>
+                  </ul>
+                </div>
+
+                {/* <details className="dropdown">
+                  <summary className="btn m-1">
+                    <FaPlus className="text-2xl" />
+                  </summary>
+                  <ul
+                    className="menu dropdown-content bg-base-100 rounded-box z-1 w-32 p-2 shadow-sm"
+                    style={{ bottom: '100%' }}
+                  >
+                    <div className="px-3 flex items-center">
+                      <IoImagesOutline className="text-lg" />
+                      <li
+                        className="flex items-center py-1"
+                        // onClick={() => fileInputRef.current.click()}
+                      >
+                        <span className="mx-2 rounded-md">Image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            setOpen(false);
+                          }}
+                          ref={fileInputRef}
+                          className="hidden"
+                        />
+                      </li>
+                    </div>
+
+                    <div className="px-3  flex items-center">
+                      <IoVideocamOutline className="text-lg" />
+                      <li
+                        className="flex items-center"
+                        onClick={() => VideofileInputRef.current.click()}
+                      >
+                        <span className="mx-2 rounded-md">Video</span>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            setOpen(false);
+                          }}
+                          ref={VideofileInputRef}
+                          className="hidden"
+                        />
+                      </li>
+                    </div>
+                  </ul>
+                </details> */}
 
                 <button
                   className={`${message121 == '' ? 'diable-send-button-color' : 'send-button-color'}   rounded-full text-white p-2 mx-1`}
@@ -242,57 +347,59 @@ const MessageSend = ({ setfirst }) => {
           </div>
         </div>
       </form>
-      <Pophover
-        customClass={' right-[5.25rem]  bottom-[2.25rem]'}
-        setOpen={setOpen}
-        open={open}
-        body={
-          <>
-            <li
-              className="px-3 flex items-center py-1"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <IoImagesOutline />
-              <span className="mx-2 rounded-md">Image</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  handleImageUpload(e);
-                  setOpen(false);
-                }}
-                ref={fileInputRef}
-                className="hidden"
-              />
-            </li>
+      {/* {open && (
+        <Pophover
+          customClass={' right-[5.25rem]  bottom-[2.25rem]'}
+          setOpen={setOpen}
+          open={open}
+          body={
+            <>
+              <li
+                className="px-3 flex items-center py-1"
+                onClick={() => fileInputRef.current.click()}
+              >
+                <IoImagesOutline />
+                <span className="mx-2 rounded-md">Image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    handleImageUpload(e);
+                    setOpen(false);
+                  }}
+                  ref={fileInputRef}
+                  className="hidden"
+                />
+              </li>
 
-            <li
-              className="px-3 flex items-center py-1"
-              onClick={() => VideofileInputRef.current.click()}
-            >
-              <IoVideocamOutline />
-              <span className="mx-2 rounded-md">Video</span>
-              <input
-                type="file"
-                accept="video/*"
-                onChange={(e) => {
-                  handleImageUpload(e);
-                  setOpen(false);
-                }}
-                ref={VideofileInputRef}
-                className="hidden"
-              />
-            </li>
-            {/* <li
+              <li
+                className="px-3 flex items-center py-1"
+                onClick={() => VideofileInputRef.current.click()}
+              >
+                <IoVideocamOutline />
+                <span className="mx-2 rounded-md">Video</span>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => {
+                    handleImageUpload(e);
+                    setOpen(false);
+                  }}
+                  ref={VideofileInputRef}
+                  className="hidden"
+                />
+              </li>
+              <li
                 className="px-3 flex items-center  py-1"
                 // onClick={() => setOpenModal(!OpenModal)}
               >
                 <MdSpatialAudioOff />
                 <span className="mx-2 rounded-md">Audio</span>
-              </li> */}
-          </>
-        }
-      />
+              </li>
+            </>
+          }
+        />
+      )} */}
 
       <Toaster />
     </>

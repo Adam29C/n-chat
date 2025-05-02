@@ -123,7 +123,8 @@ const PreviewSendingInfo = () => {
     <>
       <form action="" onSubmit={handleSendMessage}>
         <div
-          className={`${PreviewImage ? 'block' : 'hidden'} w-full min-h-[550px] flex flex-col items-center justify-center bg-gray-900 text-white  shadow-md relative`}
+          className={`${PreviewImage ? 'block' : 'hidden'} w-full  min-h-[350px] sm:min-h-[490px] md:min-h-[492px] lg:min-h-[491px] 
+] mt-[125px] md:mt-0 lg:mt-0 flex flex-col items-center justify-center bg-gray-900 text-white  shadow-md relative`}
         >
           <div
             className="absolute  bg-black w-full  p-2   top-2  text-blue-400 text-lg font-bold "
