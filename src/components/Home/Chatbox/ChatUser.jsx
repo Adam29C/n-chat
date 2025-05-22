@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ChatUserProfile from './ChatUserProfile';
 import { IoMdArrowBack } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { showSelectedUser } from '../../../Redux/features/selectedUser/selectedUserBtnSlice';
 import { useSocketContext } from '../../../context/SocketContext';
 import { RxDragHandleDots2 } from 'react-icons/rx';
@@ -16,6 +17,7 @@ import DialogBox from '../../HelpersComponents/DialogBox';
 import {
   FOR_GET_LIST,
   FOR_POST_REQUEST,
+  FOR_UPDATE_REQUEST
 } from '../../../services/common.service';
 import { apiRoutes } from '../../../utils/apiRoutes';
 import toast from 'react-hot-toast';
@@ -213,6 +215,28 @@ const ChatUser = ({ abcd }) => {
       col_size: 12,
     },
   ];
+
+  const PingUsers = async () => {
+    const payload = {
+      id: selectedUser._id,
+      isPinged: selectedUser.userPin === 0 ? true : false,
+    };
+
+    const response = await FOR_UPDATE_REQUEST(
+      apiRoutes.PING_USERS_UPI,
+      payload
+    );
+
+    if (response.status === 'success') {
+      // const res = await GET_ALL_USERS_URI_API();
+
+      // dispatch(setOtherUsers(res?.data.users));
+      setOpenModal(false);
+      toast.success(response.message, {
+        position: 'top-center',
+      });
+    }
+  };
 
   return (
     <>

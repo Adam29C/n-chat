@@ -38,21 +38,17 @@ const Login = () => {
 
         const res = await LOGIN_URI_API(values);
 
-
-
         setLoading(false);
         if (res.status === 0) {
           toast.error(res.message, {
             position: 'top-right',
           });
         } else {
-          console.log('res.data', res.data);
-
-       
+          console.log('res.data', res);
 
           dispatch(
             setAuthUser({
-              email: res.data.email,
+              // email: res.email,
               _id: res.data._id,
               role: res.data.role,
               name: res.data.name,
@@ -63,7 +59,6 @@ const Login = () => {
           localStorage.setItem(
             'info',
             JSON.stringify({
-              email: res.data.email,
               _id: res.data._id,
               role: res.data.role,
               name: res.data.name,
@@ -159,7 +154,7 @@ const Login = () => {
                   {errors.password && touched.password ? errors.password : null}
                 </span>
               </div>
-            
+
               {loading ? (
                 <button
                   className="flex justify-center items-center gap-x-2 login-color text-white py-1 rounded font-semibold  mt-3"
@@ -178,8 +173,6 @@ const Login = () => {
                 </button>
               )}
             </form>
-
-          
           </div>
 
           {/* ================== Side picture ====================== */}

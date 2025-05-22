@@ -1,5 +1,5 @@
 const apiRoutes = {
-  LOGIN_URI: `/user/login`,
+  LOGIN_URI: `/user/WebLogin`,
   USERS_URI: `/user/all`,
   MASSAGES_BY_USERS_ID_URI: `/message/get`,
   SEARCH_USERS_UPI: `/user/search`,
