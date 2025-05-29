@@ -134,7 +134,7 @@ const SingleUser = ({ data, title, abc }) => {
             {formatWhatsAppDate(data.dateTimestamp)}
           </span>
           {data.counter > 0 && (
-            <span className="text-xs bg-green-500 text-white font-bold rounded-full px-2 py-0.5">
+            <span className="text-xs counter-color text-white font-bold rounded-full px-2 py-0.5">
               {data.counter}
             </span>
           )}
